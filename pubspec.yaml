@@ -1,0 +1,38 @@
+name: technikapp
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^0.13.4
+  provider:
+  connectivity: ^3.0.6
+  flutter_bloc:
+  infinite_scroll_pagination:
+  intl:
+  shared_preferences:
+  email_validator:
+  dio:
+  another_flushbar:
+  custom_syncfusion_flutter_charts:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+  assets:
+    - assets/images/
