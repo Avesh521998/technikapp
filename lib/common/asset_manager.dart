@@ -12,6 +12,13 @@ class ImageAsset {
   static const String IC_ATTACH = "assets/images/ic_attach_files.png";
   static const String IC_VEG = "assets/images/ic_vegetarian.png";
 
+
+  static const String IC_FOOD = "assets/images/ic_food.png";
+  static const String IC_FUEL = "assets/images/ic_fuel.png";
+  static const String IC_MATERIAL = "assets/images/ic_material.png";
+  static const String IC_MISC = "assets/images/ic_misc.png";
+  static const String IC_TRAVEL = "assets/images/ic_travel.png";
+
 }
 
 class FontAsset {

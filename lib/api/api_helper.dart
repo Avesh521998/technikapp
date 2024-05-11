@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as network;
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:technikapp/common/extensions_manager.dart';
-import 'package:dio/dio.dart';
+
 import '../common/constants.dart';
 import '../common/logger.dart';
 import '../common/shared_preference_helper.dart';
@@ -26,32 +27,26 @@ class APIHelper {
   Future<NetworkResult> callPostApi(String path, dynamic params,
       {bool? headerShow}) async {
     var callingURL = "${NetworkConstant.BASE_URL_API}/$path";
-    if (_notProperHeader()) await _createHeaders();
+    if (_notProperHeader()) await _createHeaders(isShow: headerShow);
     var parameter = json.encode(params);
-    if (_isDebug) {
       timber("API URL -> $callingURL");
       timber("API Headers -> $_headers");
       timber("API Parameters -> $parameter");
-    }
 
     if (await isConnected()) {
       try {
         var resp = await network.post(Uri.parse(callingURL),
             body: parameter,
             headers: _headers);
-        if (_isDebug) timber("API Response -> ${resp.body}");
+        timber("API Response -> ${resp.body}");
         if (resp.statusCode == 200) {
           return Future.value(NetworkResult.success(resp.body));
         } else {
           return Future.value(NetworkResult.error());
         }
       } catch (e, s) {
-        if (_isDebug) {
-          timber(e);
-          timber(s);
-        } else {
-          //FirebaseCrashlytics.instance.recordError(e, s);
-        }
+        timber(e);
+        timber(s);
         return Future.value(NetworkResult.error());
       }
     } else {
@@ -62,7 +57,7 @@ class APIHelper {
   Future<NetworkResult> callNewPutApi(String path, dynamic params,
       {bool? headerShow}) async {
     var callingURL = "${NetworkConstant.BASE_URL_API}/$path";
-    if (_notProperHeader()) await _createHeaders();
+    if (_notProperHeader()) await _createHeaders(isShow: headerShow);
     var parameter = json.encode(params);
     if (_isDebug) {
       timber("API URL -> $callingURL");
@@ -188,7 +183,7 @@ class APIHelper {
         var responseString = await dio.post(callingURL,
             data: formData,
             options:
-                Options(headers: _headers, contentType: "application/json"));
+            Options(headers: _headers, contentType: "application/json"));
 
         if (_isDebug) timber("API Response -> $responseString");
         if (responseString.statusCode == 200) {
@@ -234,7 +229,7 @@ class APIHelper {
           var localPath = uploadFilePaths[i];
           if (!localPath.isNullOrEmpty()) {
             var multipartFile =
-                await MultipartFile.fromFile(uploadFilePaths[i]);
+            await MultipartFile.fromFile(uploadFilePaths[i]);
             multiPartList.add(multipartFile);
           }
         }
@@ -247,7 +242,7 @@ class APIHelper {
         var responseString = await dio.post(callingURL,
             data: formData,
             options:
-                Options(headers: _headers, contentType: "application/json"));
+            Options(headers: _headers, contentType: "application/json"));
 
         if (_isDebug) timber("API Response -> $responseString");
         if (responseString.statusCode == 200) {
@@ -289,7 +284,7 @@ class APIHelper {
         var responseString = await dio.post(callingURL,
             data: formData,
             options:
-                Options(headers: _headers, contentType: "application/json"));
+            Options(headers: _headers, contentType: "application/json"));
 
         if (_isDebug) timber("API Response -> $responseString");
         if (responseString.statusCode == 200) {
@@ -318,19 +313,22 @@ class APIHelper {
         _headers?.containsKey(NetworkConstant.AUTHORIZATION) == false;
   }
 
-  Future<void> _createHeaders() async {
+  Future<void> _createHeaders({bool? isShow}) async {
     String authToken = await getPreferenceValue(Constant.PREF_AUTH_TOKEN, "");
     print('===> token $authToken');
     if (authToken.isNotEmpty) {
+      print("You are in if");
       _headers = {
-        NetworkConstant.AUTHORIZATION: authToken,
+        if (isShow != false) NetworkConstant.AUTHORIZATION: authToken,
         'content-type': "application/json"
       };
     } else {
-      _headers = {
-        'content-type': "application/json"
-      };
+      print("You are in else");
+      _headers = {'content-type': "application/json"};
     }
+    print("----------------->>");
+    print(isShow);
+    print(_headers);
   }
 
   Future<void> updateHeaders() async {

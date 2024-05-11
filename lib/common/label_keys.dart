@@ -34,6 +34,15 @@ class Labels {
   static const ADD_EXPENCE = "Add Expense";
   static const EDIT_EXPENCE = "Edit Expense";
 
+
+  static const FUEL = "Fuel";
+  static const TRAVEL = "Travel";
+  static const MATERIAL = "Material";
+  static const FOOD = "Food";
+  static const MISC = "MISC";
+
+
+
 }
 
 class ValidationLabels {

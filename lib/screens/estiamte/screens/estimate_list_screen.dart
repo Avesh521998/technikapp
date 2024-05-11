@@ -50,6 +50,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   FocusNode remarkFocusNode = FocusNode();
   String selectedVendor = "Select Project";
   String selectedProjectId = "";
+
   @override
   void initState() {
     super.initState();
@@ -60,11 +61,11 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
 
   void addButtonList() {
     btnList.clear();
-    btnList.add(SelectedTypes(text: "Fuel", isSelected: false));
-    btnList.add(SelectedTypes(text: "Travel", isSelected: false));
-    btnList.add(SelectedTypes(text: "Material", isSelected: false));
-    btnList.add(SelectedTypes(text: "Food", isSelected: false));
-    btnList.add(SelectedTypes(text: "MISC", isSelected: false));
+    btnList.add(SelectedTypes(text: Labels.FUEL, isSelected: false));
+    btnList.add(SelectedTypes(text: Labels.TRAVEL, isSelected: false));
+    btnList.add(SelectedTypes(text: Labels.MATERIAL, isSelected: false));
+    btnList.add(SelectedTypes(text: Labels.FOOD, isSelected: false));
+    btnList.add(SelectedTypes(text: Labels.MISC, isSelected: false));
     setState(() {});
   }
 
@@ -160,7 +161,8 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
     );
   }
 
-  Widget _getSuccessWidget(BuildContext context, APIResult<List<GetEstimateListResponseEntity>> value) {
+  Widget _getSuccessWidget(BuildContext context,
+      APIResult<List<GetEstimateListResponseEntity>> value) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: ListView.separated(
@@ -181,14 +183,16 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: LocalColors.BOTTON_SELECTED.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: const Icon(Icons.add, size: 24),
-                  ),
+                  Image.asset(model.expenseType?.toLowerCase() == Labels.FOOD.toLowerCase()
+                      ? ImageAsset.IC_FOOD
+                      : model.expenseType?.toLowerCase() == Labels.MISC.toLowerCase()
+                          ? ImageAsset.IC_MISC
+                          : model.expenseType?.toLowerCase() == Labels.TRAVEL.toLowerCase()
+                              ? ImageAsset.IC_TRAVEL
+                              : model.expenseType?.toLowerCase() ==
+                                      Labels.MATERIAL.toLowerCase()
+                                  ? ImageAsset.IC_MATERIAL
+                                  : ImageAsset.IC_FUEL,height: 35,width: 35,),
                   const SizedBox(
                     width: 10,
                   ),
@@ -512,7 +516,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
     nameController.clear();
     dateController.clear();
     selectedVendor = "";
-    selectedVendor= "Select Project";
+    selectedVendor = "Select Project";
     addButtonList();
     getEstimateListCubit.getEstimateList();
   }
@@ -543,10 +547,11 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
       showFlushBar(context, errorText);
       return false;
     } else {
-      showFlushBar(context,errorText);
+      showFlushBar(context, errorText);
       return true;
     }
   }
+
   bool _isDataNewValid() {
     String errorText = "";
 
@@ -571,7 +576,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
       showFlushBar(context, errorText);
       return false;
     } else {
-      showFlushBar(context,errorText);
+      showFlushBar(context, errorText);
       return true;
     }
   }

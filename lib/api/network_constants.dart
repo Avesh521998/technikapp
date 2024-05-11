@@ -32,6 +32,7 @@ class NetworkConstant {
   static const String AUTHORIZATION = "Authorization";
   static const String BEARER = "Bearer ";
   static const String SIGN_IN = "login";
+  static const String LOGOUT = "logout";
   static const String GET_EXPENCE = "get_expenses";
   static const String ADD_EXPENCE = "add_expense";
   static const String UPDATE_EXPENCE = "update_expense";

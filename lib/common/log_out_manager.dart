@@ -14,7 +14,7 @@ class LogoutManager {
     await deleteTheSharedPreference(Constant.PREF_LOGIN_DATA);
     await deleteTheSharedPreference(Constant.PREF_AUTH_TOKEN);
     await deleteTheSharedPreference(Constant.GET_TOTAL);
-    await deleteTheSharedPreference("myBooleanKey");
+
    //NotificationManager.instance.updateUserSignIn(null);
  //  NotificationManager.instance.cancelAllNotification();
     if (redirectTo != null) {

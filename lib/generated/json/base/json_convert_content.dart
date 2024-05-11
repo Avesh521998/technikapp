@@ -21,6 +21,7 @@ import 'package:technikapp/api/model/response/get_estimate_list_response_entity.
 import 'package:technikapp/api/model/response/get_notifications_response_entity.dart';
 import 'package:technikapp/api/model/response/get_project_response_list_entity.dart';
 import 'package:technikapp/api/model/response/login_response_entity.dart';
+import 'package:technikapp/api/model/response/logout_response_entity.dart';
 import 'package:technikapp/api/model/response/notification_list_entity.dart';
 import 'package:technikapp/api/model/response/notification_un_read_count_response_entity.dart';
 
@@ -66,6 +67,7 @@ class JsonConvert {
         (GetProjectResponseListSupplyFiles)
             .toString(): GetProjectResponseListSupplyFiles.fromJson,
         (LoginResponseEntity).toString(): LoginResponseEntity.fromJson,
+        (LogoutResponseEntity).toString(): LogoutResponseEntity.fromJson,
         (NotificationListEntity).toString(): NotificationListEntity.fromJson,
         (NotificationListData).toString(): NotificationListData.fromJson,
         (NotificationUnReadCountResponseEntity)
@@ -244,6 +246,10 @@ class JsonConvert {
     if (<LoginResponseEntity>[] is M) {
       return data.map<LoginResponseEntity>((Map<String, dynamic> e) =>
           LoginResponseEntity.fromJson(e)).toList() as M;
+    }
+    if (<LogoutResponseEntity>[] is M) {
+      return data.map<LogoutResponseEntity>((Map<String, dynamic> e) =>
+          LogoutResponseEntity.fromJson(e)).toList() as M;
     }
     if (<NotificationListEntity>[] is M) {
       return data.map<NotificationListEntity>((Map<String, dynamic> e) =>
