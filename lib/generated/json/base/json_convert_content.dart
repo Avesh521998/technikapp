@@ -19,6 +19,7 @@ import 'package:technikapp/api/model/response/general_response_entity.dart';
 import 'package:technikapp/api/model/response/generate_token_response_entity.dart';
 import 'package:technikapp/api/model/response/get_estimate_list_response_entity.dart';
 import 'package:technikapp/api/model/response/get_notifications_response_entity.dart';
+import 'package:technikapp/api/model/response/get_project_expense_entity.dart';
 import 'package:technikapp/api/model/response/get_project_response_list_entity.dart';
 import 'package:technikapp/api/model/response/login_response_entity.dart';
 import 'package:technikapp/api/model/response/logout_response_entity.dart';
@@ -62,6 +63,7 @@ class JsonConvert {
             .toString(): GetNotificationsResponseDataUserDetailFrom.fromJson,
         (GetNotificationsResponseDataUserDetailTo)
             .toString(): GetNotificationsResponseDataUserDetailTo.fromJson,
+        (GetProjectExpenseEntity).toString(): GetProjectExpenseEntity.fromJson,
         (GetProjectResponseListEntity).toString(): GetProjectResponseListEntity
             .fromJson,
         (GetProjectResponseListSupplyFiles)
@@ -233,6 +235,10 @@ class JsonConvert {
       return data.map<GetNotificationsResponseDataUserDetailTo>((
           Map<String, dynamic> e) =>
           GetNotificationsResponseDataUserDetailTo.fromJson(e)).toList() as M;
+    }
+    if (<GetProjectExpenseEntity>[] is M) {
+      return data.map<GetProjectExpenseEntity>((Map<String, dynamic> e) =>
+          GetProjectExpenseEntity.fromJson(e)).toList() as M;
     }
     if (<GetProjectResponseListEntity>[] is M) {
       return data.map<GetProjectResponseListEntity>((Map<String, dynamic> e) =>

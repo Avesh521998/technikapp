@@ -32,6 +32,7 @@ class Labels {
   static const REMARK = "Remark";
   static const SELECT_TYPE = "Select Types";
   static const ADD_EXPENCE = "Add Expense";
+  static const SAVE = "Save";
   static const EDIT_EXPENCE = "Edit Expense";
 
 

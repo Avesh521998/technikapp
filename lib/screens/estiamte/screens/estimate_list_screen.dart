@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:technikapp/api/model/request/edit_expense_request_entity.dart';
 import 'package:technikapp/api/model/response/add_estimate_response_entity.dart';
+import 'package:technikapp/api/model/response/login_response_entity.dart';
 import 'package:technikapp/common/extensions_manager.dart';
 import 'package:technikapp/common/label_keys.dart';
 import 'package:technikapp/custom/date_text_field_widget.dart';
@@ -10,11 +11,11 @@ import 'package:technikapp/custom/text_field_common.dart';
 
 import '../../../api/base/api_result.dart';
 import '../../../api/model/request/add_expense_request_entity.dart';
-import '../../../api/model/request/login_request_entity.dart';
 import '../../../api/model/response/get_estimate_list_response_entity.dart';
 import '../../../api/model/response/get_project_response_list_entity.dart';
 import '../../../common/asset_manager.dart';
 import '../../../common/local_colors.dart';
+import '../../../common/user_state_manager.dart';
 import '../../../custom/api_resource_widget.dart';
 import '../../../custom/button_common.dart';
 import '../../../custom/snackbar_common.dart';
@@ -50,6 +51,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   FocusNode remarkFocusNode = FocusNode();
   String selectedVendor = "Select Project";
   String selectedProjectId = "";
+  LoginResponseEntity? loginResponse;
 
   @override
   void initState() {
@@ -59,7 +61,9 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
     getProjectListCubit.getProjectList();
   }
 
-  void addButtonList() {
+  void addButtonList() async {
+    loginResponse = await getUserPreferenceData();
+    nameController.text = loginResponse?.name ?? "";
     btnList.clear();
     btnList.add(SelectedTypes(text: Labels.FUEL, isSelected: false));
     btnList.add(SelectedTypes(text: Labels.TRAVEL, isSelected: false));
@@ -124,38 +128,45 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
             ),
           ],
         ),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 0,
-              child: APIResourceWidget<GetProjectListCubit,
-                  List<GetProjectResponseListEntity>>(
-                successListener: (context, state) {
-                  getNewProjectList.clear();
-                  var data = state.data!;
-                  if (data.isNotNullOrEmpty()) {
-                    getNewProjectList.addAll(data);
-                    setState(() {});
-                  }
-                },
-                successWidget: (c1, x1) => Container(),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            addButtonList();
+            getEstimateListCubit.getEstimateList();
+            getProjectListCubit.getProjectList();
+          },
+          child: Column(
+            children: [
+              SizedBox(
+                height: 0,
+                child: APIResourceWidget<GetProjectListCubit,
+                    List<GetProjectResponseListEntity>>(
+                  successListener: (context, state) {
+                    getNewProjectList.clear();
+                    var data = state.data!;
+                    if (data.isNotNullOrEmpty()) {
+                      getNewProjectList.addAll(data);
+                      setState(() {});
+                    }
+                  },
+                  successWidget: (c1, x1) => Container(),
+                ),
               ),
-            ),
-            Expanded(
-              child: APIResourceWidget<GetEstimateListCubit,
-                  List<GetEstimateListResponseEntity>>(
-                successListener: (context, state) {
-                  getProjectList.clear();
-                  var data = state.data!;
-                  if (data.isNotNullOrEmpty()) {
-                    getProjectList.addAll(data);
-                    setState(() {});
-                  }
-                },
-                successWidget: _getSuccessWidget,
+              Expanded(
+                child: APIResourceWidget<GetEstimateListCubit,
+                    List<GetEstimateListResponseEntity>>(
+                  successListener: (context, state) {
+                    getProjectList.clear();
+                    var data = state.data!;
+                    if (data.isNotNullOrEmpty()) {
+                      getProjectList.addAll(data);
+                      setState(() {});
+                    }
+                  },
+                  successWidget: _getSuccessWidget,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -183,16 +194,23 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 children: [
-                  Image.asset(model.expenseType?.toLowerCase() == Labels.FOOD.toLowerCase()
-                      ? ImageAsset.IC_FOOD
-                      : model.expenseType?.toLowerCase() == Labels.MISC.toLowerCase()
-                          ? ImageAsset.IC_MISC
-                          : model.expenseType?.toLowerCase() == Labels.TRAVEL.toLowerCase()
-                              ? ImageAsset.IC_TRAVEL
-                              : model.expenseType?.toLowerCase() ==
-                                      Labels.MATERIAL.toLowerCase()
-                                  ? ImageAsset.IC_MATERIAL
-                                  : ImageAsset.IC_FUEL,height: 35,width: 35,),
+                  Image.asset(
+                    model.expenseType?.toLowerCase() ==
+                            Labels.FOOD.toLowerCase()
+                        ? ImageAsset.IC_FOOD
+                        : model.expenseType?.toLowerCase() ==
+                                Labels.MISC.toLowerCase()
+                            ? ImageAsset.IC_MISC
+                            : model.expenseType?.toLowerCase() ==
+                                    Labels.TRAVEL.toLowerCase()
+                                ? ImageAsset.IC_TRAVEL
+                                : model.expenseType?.toLowerCase() ==
+                                        Labels.MATERIAL.toLowerCase()
+                                    ? ImageAsset.IC_MATERIAL
+                                    : ImageAsset.IC_FUEL,
+                    height: 35,
+                    width: 35,
+                  ),
                   const SizedBox(
                     width: 10,
                   ),
@@ -247,7 +265,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
       selectedVendor = model.projectName ?? "";
       projectNameController.text = model.projectName ?? "";
       projectIdController.text = model.projectId ?? "";
-      nameController.text = model.personName ?? "";
+      // nameController.text = model.personName ?? "";
       for (var element in btnList) {
         element.isSelected = false;
         if (element.text.toLowerCase() == model.expenseType?.toLowerCase()) {
@@ -338,13 +356,19 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                           ),
                         )),
                         height: 45,
-                        child: TextFieldWidget(
-                          nameController,
-                          Labels.NAME,
-                          nameFocusNode,
-                          outlineInputBorder: const OutlineInputBorder(
-                              borderSide: BorderSide.none),
-                          textBackGround: LocalColors.TRANSPARENT,
+                        child: Container(
+                          color: LocalColors.BUTTON_COLOR_BG,
+                          child: IgnorePointer(
+                            ignoring: true,
+                            child: TextFieldWidget(
+                              nameController,
+                              Labels.NAME,
+                              nameFocusNode,
+                              outlineInputBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              textBackGround: LocalColors.TRANSPARENT,
+                            ),
+                          ),
                         )),
                     const SizedBox(height: 10),
                     Container(
@@ -450,7 +474,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                     const SizedBox(height: 15),
                     if (model != null)
                       BlocConsumerButtonWithProgress<EditEstimateCubit,
-                              AddEstimateResponseEntity>(Labels.EDIT_EXPENCE,
+                              AddEstimateResponseEntity>(Labels.SAVE,
                           _editEstimateClick, _goToDashBoardScreenScreen),
                     if (model == null)
                       BlocConsumerButtonWithProgress<AddEstimateCubit,

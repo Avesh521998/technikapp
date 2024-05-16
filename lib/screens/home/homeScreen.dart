@@ -1,9 +1,13 @@
 import 'package:custom_syncfusion_flutter_charts/charts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:technikapp/api/model/response/login_response_entity.dart';
 import 'package:technikapp/api/model/response/logout_response_entity.dart';
 import 'package:technikapp/common/shared_preference_helper.dart';
+import 'package:technikapp/common/user_state_manager.dart';
 
+import '../../api/model/response/get_project_expense_entity.dart';
 import '../../common/constants.dart';
 import '../../common/label_keys.dart';
 import '../../common/local_colors.dart';
@@ -11,6 +15,7 @@ import '../../common/navigation_manager.dart';
 import '../../custom/api_resource_widget.dart';
 import '../login/cubit/logout_cubit.dart';
 import '../login/screens/login_screen.dart';
+import 'cubit/get_expense_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,12 +26,29 @@ class HomeScreen extends StatefulWidget {
 
 class HomeState extends State<HomeScreen> {
   final LogoutCubit _logoutCubit = LogoutCubit();
+  String _selectedOption = 'Current';
+  DateTimeRange? _selectedDateRange;
+  final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
+  GetExpenseCubit getExpenseCubit = GetExpenseCubit();
+  GetProjectExpenseEntity getProjectExpenseEntity = GetProjectExpenseEntity();
+  LoginResponseEntity? loginResponseEntity;
+  @override
+  void initState() {
+    getUserDetail();
+    super.initState();
+  }
 
+  void getUserDetail()async{
+    loginResponseEntity = await getUserPreferenceData();
+    getExpenseCubit.getExpenseList(loginResponseEntity?.name??"", _selectedOption.toLowerCase());
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _logoutCubit),
+        BlocProvider.value(value: getExpenseCubit),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -67,6 +89,20 @@ class HomeState extends State<HomeScreen> {
                   loadingWidgetBuilder: (c1, t1) => Container(),
                 ),
               ),
+              SizedBox(
+                height: 0,
+                child: APIResourceWidget<GetExpenseCubit, GetProjectExpenseEntity>(
+                  successListener: (context, state) {
+                    var data = state.data;
+                    if (data != null) {
+                      getProjectExpenseEntity = data;
+                      setState(() {});
+                    }
+                  },
+                  successWidget: (c1, t1) => Container(),
+                  loadingWidgetBuilder: (c1, t1) => Container(),
+                ),
+              ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 padding:
@@ -78,7 +114,7 @@ class HomeState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
+                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -87,7 +123,7 @@ class HomeState extends State<HomeScreen> {
                               TextStyle(color: LocalColors.GREY, fontSize: 15),
                         ),
                         Text(
-                          "₹4,567.00",
+                          "₹ ${getProjectExpenseEntity.totalValue ?? "0"}",
                           style: TextStyle(
                               color: LocalColors.WHITE,
                               fontSize: 25,
@@ -103,27 +139,35 @@ class HomeState extends State<HomeScreen> {
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
-                      child: const Row(
+                      child: DropdownButton<String>(
+                        value: _selectedOption,
+                        items: <String>['Current', 'Previous', 'Custom']
+                            .map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedOption = newValue!;
+                            if (_selectedOption != 'Custom') {
+                              _selectedDateRange = null;
+                            }
+                          });
+                          if (_selectedOption == 'Custom') {
+                            _selectDateRange(context);
+                          }
+                        },
+                      )),
+                        if (_selectedOption == 'Custom' && _selectedDateRange != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.calendar_month,
-                            size: 20,
-                          ),
-                          SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            "Current Month",
-                            style: TextStyle(
-                                color: LocalColors.PRIMARY_COLOR, fontSize: 16),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_down_outlined,
-                            size: 18,
-                          ),
+                          Text('Start Date: ${_dateFormat.format(_selectedDateRange!.start)}'),
+                          Text('End Date: ${_dateFormat.format(_selectedDateRange!.end)}'),
                         ],
                       ),
                     )
@@ -184,7 +228,20 @@ class HomeState extends State<HomeScreen> {
       ],
     );
   }
+  Future<void> _selectDateRange(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      initialDateRange: _selectedDateRange,
+    );
 
+    if (picked != null && picked != _selectedDateRange) {
+      setState(() {
+        _selectedDateRange = picked;
+      });
+    }
+  }
   final List<ChartData> chartData = [
     ChartData('David', 25, const Color.fromRGBO(9, 0, 136, 1)),
     ChartData('Steve', 38, const Color.fromRGBO(147, 0, 119, 1)),
