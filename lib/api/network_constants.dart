@@ -38,4 +38,5 @@ class NetworkConstant {
   static const String UPDATE_EXPENCE = "update_expense";
   static const String GET_PROJECT = "get_projects";
   static const String GET_EXPENSE_BY_PERSON = "count_expenses_by_person_and_month";
+  static const String GET_RANGE_EXPENSE_BY_PERSON = "count_expenses_by_date_range";
 }

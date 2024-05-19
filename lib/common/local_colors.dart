@@ -15,6 +15,13 @@ class LocalColors {
   static const CARD_BACKGROUND = Color(0xFFF0EFFF);
   static const INDICATOR_COLOR = Colors.blue;
 
+  static const FOOD_BACKGROUND = Color(0xFFcca8f0);
+  static const FUEL_BACKGROUND = Color(0xFFb0e6b2);
+  static const TRAVEL_BACKGROUND = Color(0xFFeea8b0);
+  static const MATERIAL_BACKGROUND = Color(0xFFe7d3b0);
+  static const MISC_BACKGROUND = Color(0xFFafd2ee);
+
+
   static const WHITE = Color(0xFFFFFFFF);
   static const BLUE_GREY = Colors.blueGrey;
   static const RED = Colors.red;

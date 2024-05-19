@@ -149,8 +149,7 @@ class BlocConsumerButtonWithProgress<E extends Cubit<APIResult<T>?>, T>
             if (needToShowDefaultErrorSnackBar) {
               print(value);
               print(value.message);
-              _showToastMessage(
-                  context, "Please enter valid email or password");
+              _showToastMessage(context, "Please enter valid email or password");
             }
             if (onError != null) {
               Function.apply(onError!, [orEmpty(value.message)]);

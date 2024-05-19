@@ -21,6 +21,7 @@ import 'package:technikapp/api/model/response/get_estimate_list_response_entity.
 import 'package:technikapp/api/model/response/get_notifications_response_entity.dart';
 import 'package:technikapp/api/model/response/get_project_expense_entity.dart';
 import 'package:technikapp/api/model/response/get_project_response_list_entity.dart';
+import 'package:technikapp/api/model/response/get_range_expense_entity.dart';
 import 'package:technikapp/api/model/response/login_response_entity.dart';
 import 'package:technikapp/api/model/response/logout_response_entity.dart';
 import 'package:technikapp/api/model/response/notification_list_entity.dart';
@@ -68,6 +69,9 @@ class JsonConvert {
             .fromJson,
         (GetProjectResponseListSupplyFiles)
             .toString(): GetProjectResponseListSupplyFiles.fromJson,
+        (GetRangeExpenseEntity).toString(): GetRangeExpenseEntity.fromJson,
+        (GetRangeExpenseTotalValueByCategory)
+            .toString(): GetRangeExpenseTotalValueByCategory.fromJson,
         (LoginResponseEntity).toString(): LoginResponseEntity.fromJson,
         (LogoutResponseEntity).toString(): LogoutResponseEntity.fromJson,
         (NotificationListEntity).toString(): NotificationListEntity.fromJson,
@@ -248,6 +252,15 @@ class JsonConvert {
       return data.map<GetProjectResponseListSupplyFiles>((
           Map<String, dynamic> e) =>
           GetProjectResponseListSupplyFiles.fromJson(e)).toList() as M;
+    }
+    if (<GetRangeExpenseEntity>[] is M) {
+      return data.map<GetRangeExpenseEntity>((Map<String, dynamic> e) =>
+          GetRangeExpenseEntity.fromJson(e)).toList() as M;
+    }
+    if (<GetRangeExpenseTotalValueByCategory>[] is M) {
+      return data.map<GetRangeExpenseTotalValueByCategory>((
+          Map<String, dynamic> e) =>
+          GetRangeExpenseTotalValueByCategory.fromJson(e)).toList() as M;
     }
     if (<LoginResponseEntity>[] is M) {
       return data.map<LoginResponseEntity>((Map<String, dynamic> e) =>

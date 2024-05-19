@@ -475,11 +475,11 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                     if (model != null)
                       BlocConsumerButtonWithProgress<EditEstimateCubit,
                               AddEstimateResponseEntity>(Labels.SAVE,
-                          _editEstimateClick, _goToDashBoardScreenScreen),
+                          _editEstimateClick, _goToDashBoardScreenScreen,needToShowDefaultSuccessSnackBar: false),
                     if (model == null)
                       BlocConsumerButtonWithProgress<AddEstimateCubit,
                               AddEstimateResponseEntity>(Labels.ADD_EXPENCE,
-                          _addEstimateClick, _goToDashBoardScreenScreen),
+                          _addEstimateClick, _goToDashBoardScreenScreen,needToShowDefaultSuccessSnackBar: false),
                   ],
                 ),
               ),

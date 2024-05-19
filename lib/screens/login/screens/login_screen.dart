@@ -30,6 +30,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void initState() {
+    emailController.text = "akash";
+    passwordController.text = "Akash@129";
     super.initState();
     loadSavedData();
   }

@@ -64,9 +64,9 @@ class APIResourceWidget<E extends Cubit<APIResult<T>?>, T>
             if (noInternetListener != null) noInternetListener!(context, value);
           } else if (value.apiResultType == APIResultType.FAILURE) {
             //if (errorListener != null) errorListener!(context, value);
-            LogoutManager.logOutUser(context);
+            //LogoutManager.logOutUser(context);
           } else if (value.apiResultType == APIResultType.SESSION_EXPIRED) {
-            LogoutManager.logOutUser(context, currentWidget: SignInScreen());
+            LogoutManager.logOutUser(context, currentWidget: const SignInScreen());
           } else if (value.apiResultType == APIResultType.SUCCESS) {
             if (successListener != null) successListener!(context, value);
           }
@@ -95,14 +95,20 @@ class APIResourceWidget<E extends Cubit<APIResult<T>?>, T>
   Widget _getWidgetAccordingToAPIResult(
       BuildContext context, APIResult<T> value) {
     if (value.apiResultType == APIResultType.LOADING) {
+      print("You are laoding");
       return _getLoadingWidget(context, value);
     } else if (value.apiResultType == APIResultType.FAILURE) {
+      print("You are fail");
       return _getErrorWidget(context, value);
     } else if (value.apiResultType == APIResultType.NO_INTERNET) {
+      print("You are internet");
+
       return _getNoInternetWidget(context, value);
     } else if (value.apiResultType == APIResultType.SESSION_EXPIRED) {
+      print("You are session");
       return _getSessionExpiredWidget(context, value);
     } else {
+      print("data is here");
       return successWidget(context, value);
     }
   }
