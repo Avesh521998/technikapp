@@ -6,6 +6,7 @@ import 'package:technikapp/api/model/response/login_response_entity.dart';
 import 'package:technikapp/api/model/response/logout_response_entity.dart';
 import 'package:technikapp/common/shared_preference_helper.dart';
 import 'package:technikapp/common/user_state_manager.dart';
+import 'package:technikapp/custom/button_common.dart';
 
 import '../../api/model/response/get_project_expense_entity.dart';
 import '../../api/model/response/get_range_expense_entity.dart';
@@ -51,7 +52,8 @@ class HomeState extends State<HomeScreen> {
 
   void getUserDetail() async {
     loginResponseEntity = await getUserPreferenceData();
-    getExpenseCubit.getExpenseList(loginResponseEntity?.name ?? "", _selectedOption.toLowerCase());
+    getExpenseCubit.getExpenseList(
+        loginResponseEntity?.name ?? "", _selectedOption.toLowerCase());
     setState(() {});
   }
 
@@ -71,7 +73,7 @@ class HomeState extends State<HomeScreen> {
           actions: [
             InkWell(
               onTap: () {
-                _logoutCubit.logout();
+                _showLogoutDialog(context);
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -110,6 +112,8 @@ class HomeState extends State<HomeScreen> {
                     var data = state.data;
                     if (data != null) {
                       getProjectExpenseEntity = data;
+                      listData.clear();
+
                       totalEarning = double.parse(
                               getProjectExpenseEntity.overallTotalValue ?? "0")
                           .toStringAsFixed(2);
@@ -130,27 +134,34 @@ class HomeState extends State<HomeScreen> {
                           getProjectExpenseEntity.totalValueByCategory?.mISC ??
                               "";
 
-                      listData.clear();
                       if (foodData.isNotEmpty) {
-                        listData.add(ChartData(
-                            'Food', double.parse(foodData), LocalColors.FOOD_BACKGROUND));
+                        listData.add(ChartData('Food', double.parse(foodData),
+                            LocalColors.FOOD_BACKGROUND));
                       }
                       if (fuelData.isNotEmpty) {
-                        listData.add(ChartData(
-                            'Fuel', double.parse(fuelData), LocalColors.FUEL_BACKGROUND));
+                        listData.add(ChartData('Fuel', double.parse(fuelData),
+                            LocalColors.FUEL_BACKGROUND));
                       }
                       if (materialData.isNotEmpty) {
-                        listData.add(ChartData('Material', double.parse(materialData),
+                        listData.add(ChartData(
+                            'Material',
+                            double.parse(materialData),
                             LocalColors.MATERIAL_BACKGROUND));
                       }
                       if (miscData.isNotEmpty) {
-                        listData.add(ChartData(
-                            'Misc', double.parse(miscData), LocalColors.MISC_BACKGROUND));
+                        listData.add(ChartData('Misc', double.parse(miscData),
+                            LocalColors.MISC_BACKGROUND));
                       }
                       if (travelData.isNotEmpty) {
-                        listData.add(ChartData('Travel', double.parse(travelData),
+                        listData.add(ChartData(
+                            'Travel',
+                            double.parse(travelData),
                             LocalColors.TRAVEL_BACKGROUND));
                       }
+                      listData.forEach((element) {
+                        print(element.color);
+                        print(element.x);
+                      });
                       setState(() {});
                     }
                   },
@@ -165,6 +176,7 @@ class HomeState extends State<HomeScreen> {
                   successListener: (context, state) {
                     var data = state.data;
                     if (data != null) {
+                      listData.clear();
                       getRangeExpenseEntityEntity = data;
                       totalEarning = double.parse(
                               getRangeExpenseEntityEntity.overallTotalValue ??
@@ -185,25 +197,28 @@ class HomeState extends State<HomeScreen> {
                       miscData = getRangeExpenseEntityEntity
                               .totalValueByCategory?.mISC ??
                           "";
-                      listData.clear();
                       if (foodData.isNotEmpty) {
-                        listData.add(ChartData(
-                            'Food', double.parse(foodData), LocalColors.FOOD_BACKGROUND));
+                        listData.add(ChartData('Food', double.parse(foodData),
+                            LocalColors.FOOD_BACKGROUND));
                       }
                       if (fuelData.isNotEmpty) {
-                        listData.add(ChartData(
-                            'Fuel', double.parse(fuelData), LocalColors.FUEL_BACKGROUND));
+                        listData.add(ChartData('Fuel', double.parse(fuelData),
+                            LocalColors.FUEL_BACKGROUND));
                       }
                       if (materialData.isNotEmpty) {
-                        listData.add(ChartData('Material', double.parse(materialData),
+                        listData.add(ChartData(
+                            'Material',
+                            double.parse(materialData),
                             LocalColors.MATERIAL_BACKGROUND));
                       }
                       if (miscData.isNotEmpty) {
-                        listData.add(ChartData(
-                            'Misc', double.parse(miscData), LocalColors.MISC_BACKGROUND));
+                        listData.add(ChartData('Misc', double.parse(miscData),
+                            LocalColors.MISC_BACKGROUND));
                       }
                       if (travelData.isNotEmpty) {
-                        listData.add(ChartData('Travel', double.parse(travelData),
+                        listData.add(ChartData(
+                            'Travel',
+                            double.parse(travelData),
                             LocalColors.TRAVEL_BACKGROUND));
                       }
 
@@ -271,6 +286,9 @@ class HomeState extends State<HomeScreen> {
                                   _selectedOption = newValue!;
                                   if (_selectedOption != 'Custom') {
                                     _selectedDateRange = null;
+                                    getExpenseCubit.getExpenseList(
+                                        loginResponseEntity?.name ?? "",
+                                        _selectedOption.toLowerCase());
                                   }
                                 });
                                 if (_selectedOption == 'Custom') {
@@ -323,42 +341,110 @@ class HomeState extends State<HomeScreen> {
               Center(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.width,
-                  child: SfCircularChart(
-                    margin: const EdgeInsets.all(10),
-                    series: <CircularSeries>[
-                      DoughnutSeries<ChartData, String>(
-                        dataSource: listData,
-                        xValueMapper: (ChartData data, _) => data.x,
-                        yValueMapper: (ChartData data, _) => data.y,
-                        cornerStyle: CornerStyle.bothCurve,
-                        innerRadius: '75%',
-                        name: totalEarning,
-                        dataLabelMapper: (ChartData data, _) => data.x,
-                        enableTooltip: true,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SfCircularChart(
+                        margin: const EdgeInsets.all(10),
+                        series: <CircularSeries>[
+                          DoughnutSeries<ChartData, String>(
+                            dataSource: listData,
+                            xValueMapper: (ChartData data, _) => data.x,
+                            yValueMapper: (ChartData data, _) => data.y,
+                            pointColorMapper: (ChartData data, _) => data.color,
+                            cornerStyle: CornerStyle.bothCurve,
+                            innerRadius: '75%',
+                            dataLabelSettings: const DataLabelSettings(
+                              isVisible: true,
+                              color: LocalColors.ACCENT_COLOR,
+                              opacity: 0.3,
+                            ),
+                            dataLabelMapper: (ChartData data, _) => data.x,
+                            enableTooltip: true,
+                          ),
+                        ],
                       ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Month Of Expense",
+                            style: TextStyle(
+                                color: LocalColors.GREY, fontSize: 15),
+                          ),
+                          Text(
+                            "₹ $totalEarning",
+                            style: const TextStyle(
+                                color: LocalColors.WHITE,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 25,
-                child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return _buildLegendItem(
-                          listData[index].x, listData[index].color);
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        width: 10,
-                      );
-                    },
-                    itemCount: listData.length),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(
+                  height: 25,
+                  child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return _buildLegendItem(
+                            listData[index].x, listData[index].color);
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          width: 10,
+                        );
+                      },
+                      itemCount: listData.length),
+                ),
               )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text("Logout"),
+          content: const Text(Labels.LOG_OUT_CONTENT,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          actions: <Widget>[
+            Row(
+              children: [
+                Expanded(
+                    child: PrimaryButton(Labels.YES, () {
+                  _logoutCubit.logout();
+                })),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                    child: PrimaryButton(
+                  Labels.NO,
+                  () {
+                    Navigator.pop(context);
+                  },
+                  backGroundColor: LocalColors.ACCENT_COLOR,
+                  textColor: LocalColors.PRIMARY_COLOR,
+                ))
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 

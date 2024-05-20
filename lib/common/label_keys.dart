@@ -17,10 +17,13 @@ class Labels {
 
   //Dashboard Screen
   static const DASHBOARD = "Dashboard";
+  static const YES = "YES";
+  static const NO = "No";
 
   //Login
   static const LOG_IN = "Log In";
   static const LOG_IN_CONTENT = "Just One Step Away\nTo Manage Your Expense";
+  static const LOG_OUT_CONTENT = "Are you sure you want to logout?";
   static const EMAIL = "Email";
   static const USERNAME = "Username";
   static const PASSWORD = "Password";
