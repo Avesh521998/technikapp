@@ -22,6 +22,7 @@ class Labels {
 
   //Login
   static const LOG_IN = "Log In";
+  static const LOG_OUT = "Logout";
   static const LOG_IN_CONTENT = "Just One Step Away\nTo Manage Your Expense";
   static const LOG_OUT_CONTENT = "Are you sure you want to logout?";
   static const EMAIL = "Email";

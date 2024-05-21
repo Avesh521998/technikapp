@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:technikapp/screens/home/homeScreen.dart';
+import 'package:technikapp/screens/profile/profile_screen.dart';
 
 import '../../common/local_colors.dart';
 import '../estiamte/screens/estimate_list_screen.dart';
@@ -19,6 +20,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     List<Widget> list = [
       const HomeScreen(),
       const EstimateListingScreen(),
+      const ProfileScreen(),
     ];
 
     return Scaffold(
@@ -44,14 +46,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 },
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 70),
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 35),
                   child: Container(
                     height: 50,
                     decoration: selectedIndex == 0
                         ? BoxDecoration(
-                            color: LocalColors.BLUE_DARK,
-                            borderRadius: BorderRadius.circular(4),
-                          )
+                      color: LocalColors.BLUE_DARK,
+                      borderRadius: BorderRadius.circular(4),
+                    )
                         : const BoxDecoration(),
                     child: Icon(
                       Icons.dashboard,
@@ -70,19 +72,45 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 },
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 70),
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 35),
                   child: Container(
                     height: 50,
                     decoration: selectedIndex == 1
                         ? BoxDecoration(
-                            color: LocalColors.BLUE_DARK,
-                            borderRadius: BorderRadius.circular(4),
-                          )
+                      color: LocalColors.BLUE_DARK,
+                      borderRadius: BorderRadius.circular(4),
+                    )
                         : const BoxDecoration(),
                     child: Icon(
                       Icons.analytics_rounded,
                       size: 30,
                       color: selectedIndex == 1 ? Colors.white : Colors.grey,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  selectedIndex = 2;
+                  setState(() {});
+                },
+                child: Container(
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 35),
+                  child: Container(
+                    height: 50,
+                    decoration: selectedIndex == 2
+                        ? BoxDecoration(
+                      color: LocalColors.BLUE_DARK,
+                      borderRadius: BorderRadius.circular(4),
+                    )
+                        : const BoxDecoration(),
+                    child: Icon(
+                      Icons.account_circle,
+                      size: 30,
+                      color: selectedIndex == 2 ? Colors.white : Colors.grey,
                     ),
                   ),
                 ),

@@ -3,20 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:technikapp/api/model/response/login_response_entity.dart';
-import 'package:technikapp/api/model/response/logout_response_entity.dart';
-import 'package:technikapp/common/shared_preference_helper.dart';
 import 'package:technikapp/common/user_state_manager.dart';
-import 'package:technikapp/custom/button_common.dart';
 
 import '../../api/model/response/get_project_expense_entity.dart';
 import '../../api/model/response/get_range_expense_entity.dart';
-import '../../common/constants.dart';
 import '../../common/label_keys.dart';
 import '../../common/local_colors.dart';
-import '../../common/navigation_manager.dart';
 import '../../custom/api_resource_widget.dart';
-import '../login/cubit/logout_cubit.dart';
-import '../login/screens/login_screen.dart';
 import 'cubit/get_expense_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeState extends State<HomeScreen> {
-  final LogoutCubit _logoutCubit = LogoutCubit();
   String _selectedOption = 'Current';
   DateTimeRange? _selectedDateRange;
   final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
@@ -61,7 +53,6 @@ class HomeState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(value: _logoutCubit),
         BlocProvider.value(value: getExpenseCubit),
         BlocProvider.value(value: getRangeExpenseCubit),
       ],
@@ -70,17 +61,6 @@ class HomeState extends State<HomeScreen> {
           backgroundColor: LocalColors.PRIMARY_COLOR,
           toolbarHeight: 80,
           centerTitle: true,
-          actions: [
-            InkWell(
-              onTap: () {
-                _showLogoutDialog(context);
-              },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(Icons.logout, color: LocalColors.ACCENT_COLOR),
-              ),
-            )
-          ],
           title: const Text(
             Labels.DASHBOARD,
             style: TextStyle(color: LocalColors.WHITE, fontSize: 22),
@@ -90,20 +70,6 @@ class HomeState extends State<HomeScreen> {
           color: LocalColors.PRIMARY_COLOR,
           child: Column(
             children: [
-              SizedBox(
-                height: 0,
-                child: APIResourceWidget<LogoutCubit, LogoutResponseEntity>(
-                  successListener: (context, state) {
-                    var data = state.data;
-                    if (data != null) {
-                      callFunction();
-                      setState(() {});
-                    }
-                  },
-                  successWidget: (c1, t1) => Container(),
-                  loadingWidgetBuilder: (c1, t1) => Container(),
-                ),
-              ),
               SizedBox(
                 height: 0,
                 child:
@@ -410,44 +376,6 @@ class HomeState extends State<HomeScreen> {
     );
   }
 
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: const Text("Logout"),
-          content: const Text(Labels.LOG_OUT_CONTENT,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          actions: <Widget>[
-            Row(
-              children: [
-                Expanded(
-                    child: PrimaryButton(Labels.YES, () {
-                  _logoutCubit.logout();
-                })),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                    child: PrimaryButton(
-                  Labels.NO,
-                  () {
-                    Navigator.pop(context);
-                  },
-                  backGroundColor: LocalColors.ACCENT_COLOR,
-                  textColor: LocalColors.PRIMARY_COLOR,
-                ))
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buildLegendItem(String label, Color color) {
     return Row(
       children: [
@@ -486,14 +414,6 @@ class HomeState extends State<HomeScreen> {
         print(_selectedDateRange);
       });
     }
-  }
-
-  void callFunction() async {
-    await deleteTheSharedPreference(Constant.PREF_LOGIN_DATA);
-    await deleteTheSharedPreference(Constant.PREF_AUTH_TOKEN);
-    navigateToPageAndRemoveAllPageWithFadeTransition(
-        context, const SignInScreen());
-    setState(() {});
   }
 }
 
