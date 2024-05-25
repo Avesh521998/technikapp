@@ -6,7 +6,6 @@ import 'package:technikapp/api/model/response/add_estimate_response_entity.dart'
 import 'package:technikapp/api/model/response/login_response_entity.dart';
 import 'package:technikapp/common/extensions_manager.dart';
 import 'package:technikapp/common/label_keys.dart';
-import 'package:technikapp/custom/date_text_field_widget.dart';
 import 'package:technikapp/custom/search_text_field_common.dart';
 import 'package:technikapp/custom/text_field_common.dart';
 
@@ -19,6 +18,7 @@ import '../../../common/local_colors.dart';
 import '../../../common/user_state_manager.dart';
 import '../../../custom/api_resource_widget.dart';
 import '../../../custom/button_common.dart';
+import '../../../custom/date_text_field_widget.dart';
 import '../../../custom/snackbar_common.dart';
 import '../cubit/add_expence_cubit.dart';
 import '../cubit/get_estimate_list_cubit.dart';
@@ -253,65 +253,108 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
           String formattedDate = DateFormat('MMMM dd, yyyy').format(parsedDate);
           return InkWell(
             onTap: () {
-              showBottomSheet(model: model);
+              model.isShowRemark = !(model.isShowRemark ?? false);
+              setState(() {});
             },
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    model.expenseType?.toLowerCase() ==
-                            Labels.FOOD.toLowerCase()
-                        ? ImageAsset.IC_FOOD
-                        : model.expenseType?.toLowerCase() ==
-                                Labels.MISC.toLowerCase()
-                            ? ImageAsset.IC_MISC
-                            : model.expenseType?.toLowerCase() ==
-                                    Labels.TRAVEL.toLowerCase()
-                                ? ImageAsset.IC_TRAVEL
-                                : model.expenseType?.toLowerCase() ==
-                                        Labels.MATERIAL.toLowerCase()
-                                    ? ImageAsset.IC_MATERIAL
-                                    : ImageAsset.IC_FUEL,
-                    height: 35,
-                    width: 35,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          model.expenseType ?? "",
-                          style: const TextStyle(
-                              color: LocalColors.PRIMARY_COLOR, fontSize: 15),
-                        ),
-                        Text(
-                          "Project Name : ${model.projectName ?? ""}",
-                          style: const TextStyle(
-                              color: LocalColors.PRIMARY_COLOR, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  Row(
                     children: [
-                      Text(
-                        "₹ ${model.value}",
-                        style: const TextStyle(
-                            color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                      Image.asset(
+                        model.expenseType?.toLowerCase() ==
+                                Labels.FOOD.toLowerCase()
+                            ? ImageAsset.IC_FOOD
+                            : model.expenseType?.toLowerCase() ==
+                                    Labels.MISC.toLowerCase()
+                                ? ImageAsset.IC_MISC
+                                : model.expenseType?.toLowerCase() ==
+                                        Labels.TRAVEL.toLowerCase()
+                                    ? ImageAsset.IC_TRAVEL
+                                    : model.expenseType?.toLowerCase() ==
+                                            Labels.MATERIAL.toLowerCase()
+                                        ? ImageAsset.IC_MATERIAL
+                                        : ImageAsset.IC_FUEL,
+                        height: 35,
+                        width: 35,
                       ),
-                      Text(
-                        formattedDate,
-                        style: const TextStyle(
-                            color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                      const SizedBox(
+                        width: 10,
                       ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  model.expenseType ?? "",
+                                  style: const TextStyle(
+                                      color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                                ),
+                                InkWell(
+                                    onTap: (){
+                                      showBottomSheet(model: model);
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: const BoxDecoration(
+                                        color: LocalColors.BUTTON_COLOR,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(Icons.edit, size: 15,color: LocalColors.ACCENT_COLOR),
+                                    ))
+                              ],
+                            ),
+                            Text(
+                              "Project Name : ${model.projectName ?? ""}",
+                              style: const TextStyle(
+                                  color: LocalColors.PRIMARY_COLOR, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "₹ ${model.value}",
+                            style: const TextStyle(
+                                color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                                color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                          ),
+                        ],
+                      ),
+
                     ],
                   ),
+                  if(model.isShowRemark ==true)
+                    const SizedBox(height: 10),
+                    if(model.isShowRemark ==true)
+                    Row(
+                      children: [
+                        const Text("Remark : ",style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: LocalColors.PRIMARY_COLOR,
+                          fontSize: 14,
+                        )),
+                        Expanded(
+                          child: Text("${model.description}",style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: LocalColors.PRIMARY_COLOR,
+                            fontSize: 15,
+                          )),
+                        )
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -399,30 +442,38 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: LocalColors.GREY_DARK),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: DropdownButton(
-                        isExpanded: true,
-                        hint: Text(selectedVendor,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontAsset.MEDIUM)),
-                        underline: Container(),
-                        items: getNewProjectList.map((value) {
-                          return DropdownMenuItem<GetProjectResponseListEntity>(
-                            value: value,
-                            child: Text(value.projectName.toString()),
-                          );
-                        }).toList(),
-                        onChanged: (GetProjectResponseListEntity? value) {
-                          selectedVendor = value?.projectName ?? "";
-                          projectNameController.text = value?.projectName ?? "";
-                          projectIdController.text = value?.iD ?? "";
-                          newSetState(() {});
-                        },
-                      ),
+                    DropdownButtonFormField(
+                      decoration: InputDecoration(
+                          labelText: "Project Name",
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          focusedBorder: getTextInputBorders(),
+                          border: getTextInputBorders(),
+                          disabledBorder: getTextInputBorders(),
+                          enabledBorder: getTextInputBorders(),
+                          contentPadding: const EdgeInsets.only(
+                              top: 16,
+                              bottom: 16,
+                              left: 16,
+                              right: 16),
+                          labelStyle: const TextStyle(
+                            fontSize: 16,)),
+
+                      isExpanded: true,
+                      hint: Text(selectedVendor,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontAsset.MEDIUM)),
+                      items: getNewProjectList.map((value) {
+                        return DropdownMenuItem<GetProjectResponseListEntity>(
+                          value: value,
+                          child: Text(value.projectName.toString()),
+                        );
+                      }).toList(),
+                      onChanged: (GetProjectResponseListEntity? value) {
+                        selectedVendor = value?.projectName ?? "";
+                        projectNameController.text = value?.projectName ?? "";
+                        projectIdController.text = value?.iD ?? "";
+                        newSetState(() {});
+                      },
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -495,6 +546,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                           remarkFocusNode,
                           maxLine: 4,
                           minLine: 3,
+                          maxLength: 40,
                           outlineInputBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           textBackGround: LocalColors.TRANSPARENT,

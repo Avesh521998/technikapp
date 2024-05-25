@@ -48,6 +48,10 @@ GetEstimateListResponseEntity $GetEstimateListResponseEntityFromJson(
   if (value != null) {
     getEstimateListResponseEntity.value = value;
   }
+  final bool? isShowRemark = jsonConvert.convert<bool>(json['isShowRemark']);
+  if (isShowRemark != null) {
+    getEstimateListResponseEntity.isShowRemark = isShowRemark;
+  }
   return getEstimateListResponseEntity;
 }
 
@@ -65,6 +69,7 @@ Map<String, dynamic> $GetEstimateListResponseEntityToJson(
   data['updated_at'] = entity.updatedAt;
   data['user_id'] = entity.userId;
   data['value'] = entity.value;
+  data['isShowRemark'] = entity.isShowRemark;
   return data;
 }
 
@@ -81,6 +86,7 @@ extension GetEstimateListResponseEntityExtension on GetEstimateListResponseEntit
     String? updatedAt,
     String? userId,
     String? value,
+    bool? isShowRemark,
   }) {
     return GetEstimateListResponseEntity()
       ..createdAt = createdAt ?? this.createdAt
@@ -93,6 +99,7 @@ extension GetEstimateListResponseEntityExtension on GetEstimateListResponseEntit
       ..projectName = projectName ?? this.projectName
       ..updatedAt = updatedAt ?? this.updatedAt
       ..userId = userId ?? this.userId
-      ..value = value ?? this.value;
+      ..value = value ?? this.value
+      ..isShowRemark = isShowRemark ?? this.isShowRemark;
   }
 }

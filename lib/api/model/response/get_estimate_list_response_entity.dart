@@ -23,6 +23,7 @@ class GetEstimateListResponseEntity {
 	@JSONField(name: "user_id")
 	String? userId;
 	String? value;
+	bool? isShowRemark;
 
 	GetEstimateListResponseEntity();
 

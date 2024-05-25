@@ -118,3 +118,8 @@ OutlineInputBorder getTextInputBorder({color = LocalColors.GREY}) {
       borderSide: BorderSide(color: color),
       borderRadius: BorderRadius.circular(Constant.COMMON_RADIUS_FOR_WIDGETS));
 }
+OutlineInputBorder getTextInputBorders({color = LocalColors.GREY}) {
+  return OutlineInputBorder(
+      borderSide: BorderSide(color: color),
+      borderRadius: BorderRadius.circular(Constant.COMMON_RADIUS_FOR_WIDGETS));
+}
