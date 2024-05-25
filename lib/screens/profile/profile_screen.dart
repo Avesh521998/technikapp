@@ -41,7 +41,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 65,
-          title: const Text("My Account"),
+          title: const Text("My Account",style: TextStyle(
+              color: LocalColors.PRIMARY_COLOR, fontSize: 24,fontWeight: FontWeight.w600)),
         ),
         body: Column(
           children: [
@@ -69,14 +70,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.account_circle, size: 50),
-                  SizedBox(width: 10,),
+                  const Icon(Icons.account_circle, size: 50),
+                  const SizedBox(width: 10,),
                   Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(loginResponseEntity?.name?? "",style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      Text(loginResponseEntity?.email?? "",style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      Text(loginResponseEntity?.name?? "",style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      Text(loginResponseEntity?.email?? "",style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                     ],
                   )),
                 ],
@@ -89,8 +90,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
               child: Container(
                 height: 50,
-                margin: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
                   color: LocalColors.PRIMARY_COLOR,
                   borderRadius: BorderRadius.circular(5)
@@ -102,8 +103,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: getButtonTextStyle(
                           textColor: LocalColors.ACCENT_COLOR, textSize: 20),
                     ),
-                    Spacer(),
-                    Icon(Icons.arrow_forward_ios_rounded,color: LocalColors.WHITE,)
+                    const Spacer(),
+                    const Icon(Icons.arrow_forward_ios_rounded,color: LocalColors.WHITE,)
                   ],
                 ),
               ),

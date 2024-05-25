@@ -90,7 +90,7 @@ TextStyle getTextInputStyle() {
 }
 
 InputDecoration getTextInputDecoration(String hintText,
-    {Widget? prefixIcon, Widget? suffixIcon, Widget? prefix, Widget? suffix,OutlineInputBorder? outlineInputBorder}) {
+    {Widget? prefixIcon, Widget? suffixIcon, Widget? prefix, Widget? suffix,OutlineInputBorder? outlineInputBorder,double? padding}) {
   return InputDecoration(
       labelText: hintText,
       floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -98,11 +98,11 @@ InputDecoration getTextInputDecoration(String hintText,
       border:outlineInputBorder ?? getTextInputBorder(),
       disabledBorder:outlineInputBorder ?? getTextInputBorder(),
       enabledBorder: outlineInputBorder ?? getTextInputBorder(),
-      contentPadding: const EdgeInsets.only(
-          top: 17,
-          bottom: 17,
-          left: 16,
-          right: 16),
+      contentPadding: EdgeInsets.only(
+          top: padding??17,
+          bottom: padding??17,
+          left: padding??16,
+          right: padding??16),
       labelStyle: const TextStyle(
           fontWeight: FontAsset.REGULAR,
           color: LocalColors.PRIMARY_COLOR,

@@ -8,6 +8,7 @@ class Labels {
   static const FAVOURITE = "Favourite";
   static const RETRY = "Retry";
   static const LOADING = "Loading";
+  static const SEARCH = "Search";
   static const SESSION_EXPIRED = "Session Expire";
   static const NO_INTERNET_CONNECTION = "No Internet Connection";
   static const ERROR_OCCURRED_TRY_LATER = "Error Occurred try again later";

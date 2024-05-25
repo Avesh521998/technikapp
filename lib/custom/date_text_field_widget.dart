@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:technikapp/custom/text_field_common.dart';
 import '../common/asset_manager.dart';
 import '../common/date_time_manager.dart';
 import '../common/local_colors.dart';
@@ -15,7 +16,7 @@ class DateTextFieldWidget extends StatefulWidget {
 
   const DateTextFieldWidget(
       this._textEditingController, this._hintText, this._currentFocusNode,
-      {this.nextFocusNode,
+      {super.key, this.nextFocusNode,
       this.firstDate,
       this.lastDate,
       this.preSelectedDate,
@@ -94,7 +95,13 @@ class _DateTextFieldWidgetState extends State<DateTextFieldWidget> {
               color: LocalColors.PRIMARY_COLOR,
             ),
             decoration:
-                getCalendarTextWidgetScreenInputDecoration(widget._hintText,
+            getTextInputDecoration(widget._hintText,
+                    padding: 0,
+                    outlineInputBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.zero,
+                      borderSide: BorderSide.none,
+                      gapPadding: 0,
+                    ),
                     suffixIcon: const Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: Icon(

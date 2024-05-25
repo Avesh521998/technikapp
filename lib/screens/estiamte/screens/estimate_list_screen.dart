@@ -7,6 +7,7 @@ import 'package:technikapp/api/model/response/login_response_entity.dart';
 import 'package:technikapp/common/extensions_manager.dart';
 import 'package:technikapp/common/label_keys.dart';
 import 'package:technikapp/custom/date_text_field_widget.dart';
+import 'package:technikapp/custom/search_text_field_common.dart';
 import 'package:technikapp/custom/text_field_common.dart';
 
 import '../../../api/base/api_result.dart';
@@ -30,12 +31,14 @@ class EstimateListingScreen extends StatefulWidget {
 }
 
 class _EstimateListingScreenState extends State<EstimateListingScreen> {
+  List<GetEstimateListResponseEntity> originalList = [];
   List<GetEstimateListResponseEntity> getProjectList = [];
   List<GetProjectResponseListEntity> getNewProjectList = [];
   List<SelectedTypes> btnList = [];
   GetEstimateListCubit getEstimateListCubit = GetEstimateListCubit();
   AddEstimateCubit addEstimateCubit = AddEstimateCubit();
   EditEstimateCubit editEstimateCubit = EditEstimateCubit();
+  SearchEstimateListCubit searchEstimateCubit = SearchEstimateListCubit();
   GetProjectListCubit getProjectListCubit = GetProjectListCubit();
   TextEditingController nameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
@@ -44,7 +47,9 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   TextEditingController selectTypeController = TextEditingController();
   TextEditingController projectIdController = TextEditingController();
   TextEditingController projectNameController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
+  FocusNode searchFocusNode = FocusNode();
   FocusNode nameFocusNode = FocusNode();
   FocusNode dateFocusNode = FocusNode();
   FocusNode amountFocusNode = FocusNode();
@@ -52,17 +57,27 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   String selectedVendor = "Select Project";
   String selectedProjectId = "";
   LoginResponseEntity? loginResponse;
+  bool isAscending = true;
 
+  void sortItems(bool isAscending) {
+    setState(() {
+      if (isAscending) {
+        getProjectList.sort((a, b) => a.projectName!.compareTo(b.projectName ?? ""));
+      } else {
+        getProjectList.sort((a, b) => b.projectName!.compareTo(a.projectName ?? ""));
+      }
+    });
+  }
   @override
   void initState() {
     super.initState();
     addButtonList();
-    getEstimateListCubit.getEstimateList();
-    getProjectListCubit.getProjectList();
   }
 
   void addButtonList() async {
     loginResponse = await getUserPreferenceData();
+    getEstimateListCubit.getEstimateList(loginResponse?.name??"");
+    getProjectListCubit.getProjectList();
     nameController.text = loginResponse?.name ?? "";
     btnList.clear();
     btnList.add(SelectedTypes(text: Labels.FUEL, isSelected: false));
@@ -81,11 +96,14 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
         BlocProvider.value(value: addEstimateCubit),
         BlocProvider.value(value: editEstimateCubit),
         BlocProvider.value(value: getProjectListCubit),
+        BlocProvider.value(value: searchEstimateCubit),
       ],
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 65,
-          title: const Text("List Of All Expenses"),
+          title: const Text("All Expenses",style: TextStyle(
+              color: LocalColors.PRIMARY_COLOR, fontSize: 24,fontWeight: FontWeight.w600),
+          ),
           actions: [
             InkWell(
               onTap: () {
@@ -107,11 +125,10 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                 child: const Icon(Icons.add, size: 24),
               ),
             ),
-            InkWell(
-              onTap: () {},
-              child: Container(
+            PopupMenuButton<String>(
+              icon: Container(
                 padding: const EdgeInsets.all(2),
-                margin: const EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.only(right: 10,left: 5),
                 decoration: const BoxDecoration(
                   color: LocalColors.WHITE,
                   shape: BoxShape.circle,
@@ -125,13 +142,40 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                 ),
                 child: const Icon(Icons.filter_alt_outlined, size: 24),
               ),
+              onSelected: (String result) {
+                setState(() {
+                  if (result == 'A-Z') {
+                    sortItems(true);
+                  } else if (result == 'Z-A') {
+                    sortItems(false);
+                  }else if (result == "All"){
+                    getEstimateListCubit.getEstimateList(loginResponse?.name??"");
+                    getProjectListCubit.getProjectList();
+                  }
+                });
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'All',
+                  child: Text('All'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'A-Z',
+                  child: Text('Sort A-Z'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'Z-A',
+                  child: Text('Sort Z-A'),
+                ),
+
+              ],
             ),
           ],
         ),
         body: RefreshIndicator(
           onRefresh: () async {
             addButtonList();
-            getEstimateListCubit.getEstimateList();
+            getEstimateListCubit.getEstimateList(loginResponse?.name??"");
             getProjectListCubit.getProjectList();
           },
           child: Column(
@@ -151,8 +195,30 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                   successWidget: (c1, x1) => Container(),
                 ),
               ),
+             Padding(
+               padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+               child: SearchTextFieldWidget(searchController, searchFocusNode,changeListener: (value){
+                  searchEstimateCubit.getSearchEstimateList(loginResponse?.name ?? "", value);
+                }),
+             ),
               Expanded(
                 child: APIResourceWidget<GetEstimateListCubit,
+                    List<GetEstimateListResponseEntity>>(
+                  successListener: (context, state) {
+                    getProjectList.clear();
+                    var data = state.data!;
+                    if (data.isNotNullOrEmpty()) {
+                      getProjectList.addAll(data);
+                      originalList = getProjectList;
+                      setState(() {});
+                    }
+                  },
+                  successWidget: _getSuccessWidget,
+                ),
+              ),
+              SizedBox(
+                height: 0,
+                child: APIResourceWidget<SearchEstimateListCubit,
                     List<GetEstimateListResponseEntity>>(
                   successListener: (context, state) {
                     getProjectList.clear();
@@ -162,7 +228,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                       setState(() {});
                     }
                   },
-                  successWidget: _getSuccessWidget,
+                  successWidget: (c1,v1)=>Container(),
                 ),
               ),
             ],
@@ -260,6 +326,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   }
 
   showBottomSheet({GetEstimateListResponseEntity? model}) {
+    print(model);
     if (model != null) {
       selectedProjectId = model.id ?? "";
       selectedVendor = model.projectName ?? "";
@@ -279,6 +346,17 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
       amountController.text = model.value ?? "";
       remarkController.text = model.description ?? "";
       dateController.text = formattedDate;
+    }else{
+      projectNameController.clear();
+      selectTypeController.clear();
+      amountController.clear();
+      remarkController.clear();
+      projectIdController.clear();
+      nameController.clear();
+      dateController.clear();
+      selectedVendor = "";
+      selectedVendor = "Select Project";
+      addButtonList();
     }
     return showModalBottomSheet<void>(
       context: context,
@@ -381,7 +459,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                         )),
                         height: 45,
                         child: DateTextFieldWidget(
-                            dateController, Labels.DATE, dateFocusNode)),
+                            dateController, Labels.DATE, dateFocusNode,)),
                     const SizedBox(height: 10),
                     Container(
                         decoration: const BoxDecoration(
@@ -542,7 +620,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
     selectedVendor = "";
     selectedVendor = "Select Project";
     addButtonList();
-    getEstimateListCubit.getEstimateList();
+    getEstimateListCubit.getEstimateList(loginResponse?.name??"");
   }
 
   bool _isDataValid() {

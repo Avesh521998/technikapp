@@ -63,7 +63,8 @@ class HomeState extends State<HomeScreen> {
           centerTitle: true,
           title: const Text(
             Labels.DASHBOARD,
-            style: TextStyle(color: LocalColors.WHITE, fontSize: 22),
+            style: TextStyle(
+              color: LocalColors.WHITE, fontSize: 24,fontWeight: FontWeight.w600),
           ),
         ),
         body: Container(
@@ -196,7 +197,7 @@ class HomeState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
+                margin: const EdgeInsets.symmetric(horizontal: 12),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 7, vertical: 15),
                 decoration: BoxDecoration(

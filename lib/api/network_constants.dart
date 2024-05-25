@@ -33,10 +33,11 @@ class NetworkConstant {
   static const String BEARER = "Bearer ";
   static const String SIGN_IN = "login";
   static const String LOGOUT = "logout";
-  static const String GET_EXPENCE = "get_expenses";
+  static const String GET_EXPENCE = "get_expenses_by_person";
   static const String ADD_EXPENCE = "add_expense";
   static const String UPDATE_EXPENCE = "update_expense";
   static const String GET_PROJECT = "get_projects";
   static const String GET_EXPENSE_BY_PERSON = "count_expenses_by_person_and_month";
   static const String GET_RANGE_EXPENSE_BY_PERSON = "count_expenses_by_date_range";
+  static const String SEARCH_EXPENSE = "search_expenses";
 }

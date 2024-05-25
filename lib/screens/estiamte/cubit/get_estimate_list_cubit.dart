@@ -10,10 +10,23 @@ import '../../../api/network_constants.dart';
 class GetEstimateListCubit extends Cubit<APIResult<List<GetEstimateListResponseEntity>>?> {
   GetEstimateListCubit() : super(null);
 
-  Future<void> getEstimateList() async {
+  Future<void> getEstimateList(String personName) async {
     emit(APIResult.loading());
     var networkResult =
-    await APIHelper.instance.callGetApi(NetworkConstant.GET_EXPENCE, null);
+    await APIHelper.instance.callGetApi("${NetworkConstant.GET_EXPENCE}/$personName", null);
+    var apiResultFromNetwork =
+    getAPIResultFromNetworkWithoutBase<List<GetEstimateListResponseEntity>>(
+        networkResult);
+    emit(apiResultFromNetwork);
+  }
+}
+class SearchEstimateListCubit extends Cubit<APIResult<List<GetEstimateListResponseEntity>>?> {
+  SearchEstimateListCubit() : super(null);
+
+  Future<void> getSearchEstimateList(String personName,String searchString) async {
+    emit(APIResult.loading());
+    var networkResult =
+    await APIHelper.instance.callGetApi("${NetworkConstant.SEARCH_EXPENSE}?person_name=$personName&query=$searchString", null);
     var apiResultFromNetwork =
     getAPIResultFromNetworkWithoutBase<List<GetEstimateListResponseEntity>>(
         networkResult);
