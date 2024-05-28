@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:technikapp/custom/text_field_common.dart';
 
+import '../common/constants.dart';
 import '../common/label_keys.dart';
 import '../common/local_colors.dart';
 
@@ -20,7 +21,8 @@ class SearchTextFieldWidget extends StatelessWidget {
   final ValueChanged<String>? changeListener;
 
   const SearchTextFieldWidget(this.textEditingController, this.currentFocusNode,
-      {super.key, this.hintText = Labels.SEARCH,
+      {super.key,
+      this.hintText = Labels.SEARCH,
       this.textInputType = TextInputType.text,
       this.formatters,
       this.textInputAction = TextInputAction.search,
@@ -54,7 +56,10 @@ class SearchTextFieldWidget extends StatelessWidget {
           prefixIcon: const Icon(
             Icons.search,
             color: LocalColors.PRIMARY_COLOR,
-          )),
+          ),
+          outlineInputBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: LocalColors.GREY),
+              borderRadius: BorderRadius.circular(30))),
     );
   }
 }

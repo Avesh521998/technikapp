@@ -199,7 +199,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
                child: SearchTextFieldWidget(searchController, searchFocusNode,changeListener: (value){
                   searchEstimateCubit.getSearchEstimateList(loginResponse?.name ?? "", value);
-                }),
+                },),
              ),
               Expanded(
                 child: APIResourceWidget<GetEstimateListCubit,
@@ -288,27 +288,10 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  model.expenseType ?? "",
-                                  style: const TextStyle(
-                                      color: LocalColors.PRIMARY_COLOR, fontSize: 15),
-                                ),
-                                InkWell(
-                                    onTap: (){
-                                      showBottomSheet(model: model);
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.all(5),
-                                      padding: const EdgeInsets.all(3),
-                                      decoration: const BoxDecoration(
-                                        color: LocalColors.BUTTON_COLOR,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(Icons.edit, size: 15,color: LocalColors.ACCENT_COLOR),
-                                    ))
-                              ],
+                            Text(
+                              model.expenseType ?? "",
+                              style: const TextStyle(
+                                  color: LocalColors.PRIMARY_COLOR, fontSize: 15),
                             ),
                             Text(
                               "Project Name : ${model.projectName ?? ""}",
@@ -318,13 +301,34 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                           ],
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      SizedBox(width: 10,),
+                      Expanded(
+                          flex: 0,
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "₹ ${model.value}",
-                            style: const TextStyle(
-                                color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "₹ ${model.value}",
+                                style: const TextStyle(
+                                    color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                              ),
+                              InkWell(
+                                  onTap: (){
+                                    showBottomSheet(model: model);
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.all(5),
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: const BoxDecoration(
+                                      color: LocalColors.BUTTON_COLOR,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.edit, size: 15,color: LocalColors.ACCENT_COLOR),
+                                  ))
+
+                            ],
                           ),
                           Text(
                             formattedDate,
@@ -332,7 +336,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                                 color: LocalColors.PRIMARY_COLOR, fontSize: 15),
                           ),
                         ],
-                      ),
+                      )),
 
                     ],
                   ),
@@ -426,7 +430,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          model != null ? "Edit Expenses" : "Expenses",
+                          model != null ? "Edit Expense" : "Expenses",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: LocalColors.PRIMARY_COLOR,
@@ -517,7 +521,6 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                             border: Border(
                           bottom: BorderSide(
                             color: LocalColors.BOTTON_SELECTED,
-                            width: 1.0,
                           ),
                         )),
                         height: 45,

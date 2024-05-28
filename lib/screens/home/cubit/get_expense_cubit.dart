@@ -12,7 +12,7 @@ class GetExpenseCubit extends Cubit<APIResult<GetProjectExpenseEntity>?> {
   Future<void> getExpenseList(String user, String type) async {
     emit(APIResult.loading());
     var networkResult = await APIHelper.instance.callGetApi(
-        "${NetworkConstant.GET_EXPENSE_BY_PERSON}/${user.replaceAll("%20", " ")}/$type",
+        "${NetworkConstant.GET_EXPENSE_BY_PERSON}/${user.replaceAll("%20", " ")}/${type.replaceAll(" month", "")}",
         null);
     var apiResultFromNetwork =
         getAPIResultFromNetworkWithoutBase<GetProjectExpenseEntity>(

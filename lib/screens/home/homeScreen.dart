@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:technikapp/api/model/response/login_response_entity.dart';
+import 'package:technikapp/api/network_constants.dart';
 import 'package:technikapp/common/user_state_manager.dart';
 
 import '../../api/model/response/get_project_expense_entity.dart';
@@ -20,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeState extends State<HomeScreen> {
-  String _selectedOption = 'Current';
+  String _selectedOption = 'Current Month';
   DateTimeRange? _selectedDateRange;
   final DateFormat _dateFormat = DateFormat('dd/MM/yyyy');
   GetExpenseCubit getExpenseCubit = GetExpenseCubit();
@@ -64,7 +65,9 @@ class HomeState extends State<HomeScreen> {
           title: const Text(
             Labels.DASHBOARD,
             style: TextStyle(
-              color: LocalColors.WHITE, fontSize: 24,fontWeight: FontWeight.w600),
+                color: LocalColors.WHITE,
+                fontSize: 24,
+                fontWeight: FontWeight.w600),
           ),
         ),
         body: Container(
@@ -192,6 +195,14 @@ class HomeState extends State<HomeScreen> {
                       setState(() {});
                     }
                   },
+                  errorListener: (context,state){
+                    print("============>");
+                    if (state.apiResultType == APIResultType.FAILURE) {
+                      totalEarning = "0";
+                      listData.clear();
+                      setState(() {});
+                    }
+                  },
                   successWidget: (c1, t1) => Container(),
                   loadingWidgetBuilder: (c1, t1) => Container(),
                 ),
@@ -241,8 +252,11 @@ class HomeState extends State<HomeScreen> {
                             child: DropdownButton<String>(
                               value: _selectedOption,
                               isExpanded: true,
-                              items: <String>['Current', 'Previous', 'Custom']
-                                  .map((String value) {
+                              items: <String>[
+                                'Current Month',
+                                'Previous Month',
+                                'Custom Date'
+                              ].map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
@@ -251,19 +265,19 @@ class HomeState extends State<HomeScreen> {
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedOption = newValue!;
-                                  if (_selectedOption != 'Custom') {
+                                  if (_selectedOption != 'Custom Date') {
                                     _selectedDateRange = null;
                                     getExpenseCubit.getExpenseList(
                                         loginResponseEntity?.name ?? "",
                                         _selectedOption.toLowerCase());
                                   }
                                 });
-                                if (_selectedOption == 'Custom') {
+                                if (_selectedOption == 'Custom Date') {
                                   _selectDateRange(context);
                                 }
                               },
                             )),
-                        if (_selectedOption == 'Custom' &&
+                        if (_selectedOption == 'Custom Date' &&
                             _selectedDateRange != null)
                           InkWell(
                             onTap: () {
