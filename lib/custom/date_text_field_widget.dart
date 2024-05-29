@@ -48,23 +48,15 @@ class _DateTextFieldWidgetState extends State<DateTextFieldWidget> {
     if (widget.preSelectedDate != null) {
       _selectedDateTime = widget.preSelectedDate!;
     }
-    print(_lastDate);
-   // assertSelectedDate();
   }
 
   void assertSelectedDate() {
-    print("------->");
-    print(_selectedDateTime);
     if (!_selectedDateTime.isBefore(_lastDate) ||
         !_selectedDateTime.isAfter(_firstDate)) {
       if (_checkCurrentDateInsideRange()) {
         _selectedDateTime = DateTime.now();
-        print("if------->");
-        print(_selectedDateTime);
       } else {
         _selectedDateTime = _lastDate;
-        print("else------->");
-        print(_selectedDateTime);
       }
     }
   }
@@ -97,7 +89,7 @@ class _DateTextFieldWidgetState extends State<DateTextFieldWidget> {
             decoration:
             getTextInputDecoration(widget._hintText,
                     padding: 0,
-                    outlineInputBorder: OutlineInputBorder(
+                    outlineInputBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.zero,
                       borderSide: BorderSide.none,
                       gapPadding: 0,

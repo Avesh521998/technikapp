@@ -38,7 +38,7 @@ class SplashScreenState extends State<SplashScreen> {
         _goToDashBoardScreen();
       }
     } else {
-      navigateToPageAndRemoveAllPageWithFadeTransition(context, SignInScreen(),
+      navigateToPageAndRemoveAllPageWithFadeTransition(context, const SignInScreen(),
           currentWidget: widget);
     }
   }
@@ -69,10 +69,7 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   Future<String> checkForSignInResponse() async {
-    print("Your prefernce value");
     var loginData = getPreferenceValue(Constant.PREF_LOGIN_DATA, "");
-    print("Login Data");
-    print(loginData);
     return loginData;
   }
 }

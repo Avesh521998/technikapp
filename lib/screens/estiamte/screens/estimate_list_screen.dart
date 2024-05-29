@@ -301,7 +301,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(width: 10,),
+                      const SizedBox(width: 10,),
                       Expanded(
                           flex: 0,
                           child: Column(crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,7 +319,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                                     showBottomSheet(model: model);
                                   },
                                   child: Container(
-                                    margin: EdgeInsets.all(5),
+                                    margin: const EdgeInsets.all(5),
                                     padding: const EdgeInsets.all(3),
                                     decoration: const BoxDecoration(
                                       color: LocalColors.BUTTON_COLOR,
@@ -373,7 +373,6 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   }
 
   showBottomSheet({GetEstimateListResponseEntity? model}) {
-    print(model);
     if (model != null) {
       selectedProjectId = model.id ?? "";
       selectedVendor = model.projectName ?? "";

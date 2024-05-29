@@ -10,7 +10,7 @@ class UnderLineTextWidget extends StatelessWidget {
   final double? textSize;
 
   const UnderLineTextWidget(this.titleKey, this.onTap,
-      {this.textColor = LocalColors.PRIMARY_COLOR, this.textSize});
+      {super.key, this.textColor = LocalColors.PRIMARY_COLOR, this.textSize});
 
   @override
   Widget build(BuildContext context) {

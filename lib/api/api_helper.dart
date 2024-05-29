@@ -315,20 +315,14 @@ class APIHelper {
 
   Future<void> _createHeaders({bool? isShow}) async {
     String authToken = await getPreferenceValue(Constant.PREF_AUTH_TOKEN, "");
-    print('===> token $authToken');
     if (authToken.isNotEmpty) {
-      print("You are in if");
       _headers = {
         if (isShow != false) NetworkConstant.AUTHORIZATION: authToken,
         'content-type': "application/json"
       };
     } else {
-      print("You are in else");
       _headers = {'content-type': "application/json"};
     }
-    print("----------------->>");
-    print(isShow);
-    print(_headers);
   }
 
   Future<void> updateHeaders() async {

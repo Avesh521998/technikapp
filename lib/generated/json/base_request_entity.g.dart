@@ -1,4 +1,3 @@
-import 'package:technikapp/generated/json/base/json_convert_content.dart';
 import 'package:technikapp/api/base/base_request_entity.dart';
 
 BaseRequestEntity $BaseRequestEntityFromJson(Map<String, dynamic> json) {

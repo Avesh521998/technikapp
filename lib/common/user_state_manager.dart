@@ -10,24 +10,18 @@ import 'constants.dart';
 import 'navigation_manager.dart';
 
 void goToMainScreenFromOnboarding(BuildContext context, LoginResponseEntity signInResponseEntity) async{
-  print("Access token");
-  print(signInResponseEntity.authKey);
   await savePreferenceValue(Constant.PREF_AUTH_TOKEN, signInResponseEntity.authKey);
   await savePreferenceValue(Constant.PREF_LOGIN_DATA, json.encode(signInResponseEntity.toJson()));
   await savePreferenceValue(Constant.PREF_LOGIN_BOOL, true);
-  //Updating the notification manager class with latest sign in data so that push notification can be maintained
-  //NotificationManager.instance.updateUserSignIn(signInResponseEntity);
   goToMainScreenManager(context, signInResponseEntity);
 }
 
 void goToMainScreenManager(
     BuildContext context, LoginResponseEntity signInResponseEntity) {
   if (signInResponseEntity.authKey !=null) {
-    print("Token is ");
     navigateToPageAndRemoveAllPage(
         context, const DashBoardScreen());
   } else {
-    print("token is empty");
     navigateToPage(context, const SignInScreen());
   }
 }

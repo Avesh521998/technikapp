@@ -87,7 +87,6 @@ class HomeState extends State<HomeScreen> {
                       totalEarning = double.parse(
                               getProjectExpenseEntity.overallTotalValue ?? "0")
                           .toStringAsFixed(2);
-                      print(totalEarning);
                       foodData =
                           getProjectExpenseEntity.totalValueByCategory?.food ??
                               "";
@@ -128,10 +127,6 @@ class HomeState extends State<HomeScreen> {
                             double.parse(travelData),
                             LocalColors.TRAVEL_BACKGROUND));
                       }
-                      listData.forEach((element) {
-                        print(element.color);
-                        print(element.x);
-                      });
                       setState(() {});
                     }
                   },
@@ -195,8 +190,7 @@ class HomeState extends State<HomeScreen> {
                       setState(() {});
                     }
                   },
-                  errorListener: (context,state){
-                    print("============>");
+                  errorListener: (context, state) {
                     if (state.apiResultType == APIResultType.FAILURE) {
                       totalEarning = "0";
                       listData.clear();
@@ -263,6 +257,8 @@ class HomeState extends State<HomeScreen> {
                                 );
                               }).toList(),
                               onChanged: (String? newValue) {
+                                listData.clear();
+                                totalEarning = "0";
                                 setState(() {
                                   _selectedOption = newValue!;
                                   if (_selectedOption != 'Custom Date') {
@@ -322,48 +318,59 @@ class HomeState extends State<HomeScreen> {
               Center(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SfCircularChart(
-                        margin: const EdgeInsets.all(10),
-                        series: <CircularSeries>[
-                          DoughnutSeries<ChartData, String>(
-                            dataSource: listData,
-                            xValueMapper: (ChartData data, _) => data.x,
-                            yValueMapper: (ChartData data, _) => data.y,
-                            pointColorMapper: (ChartData data, _) => data.color,
-                            cornerStyle: CornerStyle.bothCurve,
-                            innerRadius: '75%',
-                            dataLabelSettings: const DataLabelSettings(
-                              isVisible: true,
-                              color: LocalColors.ACCENT_COLOR,
-                              opacity: 0.3,
+                  child: listData.isNotEmpty
+                      ? Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SfCircularChart(
+                              margin: const EdgeInsets.all(10),
+                              series: <CircularSeries>[
+                                DoughnutSeries<ChartData, String>(
+                                  dataSource: listData,
+                                  xValueMapper: (ChartData data, _) => data.x,
+                                  yValueMapper: (ChartData data, _) => data.y,
+                                  pointColorMapper: (ChartData data, _) =>
+                                      data.color,
+                                  cornerStyle: CornerStyle.bothCurve,
+                                  innerRadius: '75%',
+                                  dataLabelSettings: const DataLabelSettings(
+                                    isVisible: true,
+                                    color: LocalColors.ACCENT_COLOR,
+                                    opacity: 0.3,
+                                  ),
+                                  dataLabelMapper: (ChartData data, _) =>
+                                      data.x,
+                                  enableTooltip: true,
+                                ),
+                              ],
                             ),
-                            dataLabelMapper: (ChartData data, _) => data.x,
-                            enableTooltip: true,
-                          ),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Month Of Expense",
-                            style: TextStyle(
-                                color: LocalColors.GREY, fontSize: 15),
-                          ),
-                          Text(
-                            "₹ $totalEarning",
-                            style: const TextStyle(
-                                color: LocalColors.WHITE,
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Month Of Expense",
+                                  style: TextStyle(
+                                      color: LocalColors.GREY, fontSize: 15),
+                                ),
+                                Text(
+                                  "₹ $totalEarning",
+                                  style: const TextStyle(
+                                      color: LocalColors.WHITE,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )
+                          ],
+                        )
+                      : const Center(
+                          child: Text(
+                          "No expenses found!",
+                          style: TextStyle(
+                              color: LocalColors.WHITE,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        )),
                 ),
               ),
               Padding(
@@ -426,7 +433,6 @@ class HomeState extends State<HomeScreen> {
             "";
         getRangeExpenseCubit.getRangeExpenseList(
             loginResponseEntity?.name ?? "", startDate, endDate);
-        print(_selectedDateRange);
       });
     }
   }

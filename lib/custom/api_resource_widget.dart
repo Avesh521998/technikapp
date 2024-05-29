@@ -66,7 +66,8 @@ class APIResourceWidget<E extends Cubit<APIResult<T>?>, T>
             //if (errorListener != null) errorListener!(context, value);
             //LogoutManager.logOutUser(context);
           } else if (value.apiResultType == APIResultType.SESSION_EXPIRED) {
-            LogoutManager.logOutUser(context, currentWidget: const SignInScreen());
+            LogoutManager.logOutUser(context,
+                currentWidget: const SignInScreen());
           } else if (value.apiResultType == APIResultType.SUCCESS) {
             if (successListener != null) successListener!(context, value);
           }
@@ -95,20 +96,14 @@ class APIResourceWidget<E extends Cubit<APIResult<T>?>, T>
   Widget _getWidgetAccordingToAPIResult(
       BuildContext context, APIResult<T> value) {
     if (value.apiResultType == APIResultType.LOADING) {
-      print("You are laoding");
       return _getLoadingWidget(context, value);
     } else if (value.apiResultType == APIResultType.FAILURE) {
-      print("You are fail");
       return _getErrorWidget(context, value);
     } else if (value.apiResultType == APIResultType.NO_INTERNET) {
-      print("You are internet");
-
       return _getNoInternetWidget(context, value);
     } else if (value.apiResultType == APIResultType.SESSION_EXPIRED) {
-      print("You are session");
       return _getSessionExpiredWidget(context, value);
     } else {
-      print("data is here");
       return successWidget(context, value);
     }
   }
@@ -135,13 +130,14 @@ class APIResourceWidget<E extends Cubit<APIResult<T>?>, T>
           LogoutManager.logOutUser(context, currentWidget: this);
         },
       )
-        /*Center(
+          /*Center(
         child: CustomErrorWidget(
           errorText,
           callback: callbackForErrorRetry,
           needToShowRetry: needToShowRetryForError,
         ),
-      )*/;
+      )*/
+          ;
     }
   }
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:technikapp/custom/text_field_common.dart';
 
-import '../common/constants.dart';
 import '../common/label_keys.dart';
 import '../common/local_colors.dart';
 
@@ -43,8 +42,9 @@ class SearchTextFieldWidget extends StatelessWidget {
       keyboardType: textInputType,
       onSubmitted: (text) {
         if (searchListener != null) searchListener!(text);
-        if (nextFocusNode != null)
+        if (nextFocusNode != null) {
           FocusScope.of(context).requestFocus(nextFocusNode);
+        }
       },
       onChanged: changeListener,
       cursorColor: LocalColors.PRIMARY_COLOR,
@@ -58,7 +58,7 @@ class SearchTextFieldWidget extends StatelessWidget {
             color: LocalColors.PRIMARY_COLOR,
           ),
           outlineInputBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: LocalColors.GREY),
+              borderSide: const BorderSide(color: LocalColors.GREY),
               borderRadius: BorderRadius.circular(30))),
     );
   }

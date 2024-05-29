@@ -147,8 +147,6 @@ class BlocConsumerButtonWithProgress<E extends Cubit<APIResult<T>?>, T>
             if (onNoInternet != null) Function.apply(onNoInternet!, []);
           } else if (value.apiResultType == APIResultType.FAILURE) {
             if (needToShowDefaultErrorSnackBar) {
-              print(value);
-              print(value.message);
               _showToastMessage(context, "Please enter valid email or password");
             }
             if (onError != null) {
