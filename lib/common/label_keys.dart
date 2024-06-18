@@ -46,6 +46,7 @@ class Labels {
   static const MATERIAL = "Material";
   static const FOOD = "Food";
   static const MISC = "MISC";
+  static const DAILY_WORK = "Daily Work";
 
 
 

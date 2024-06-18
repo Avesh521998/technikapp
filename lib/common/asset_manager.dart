@@ -18,6 +18,7 @@ class ImageAsset {
   static const String IC_MATERIAL = "assets/images/ic_material.png";
   static const String IC_MISC = "assets/images/ic_misc.png";
   static const String IC_TRAVEL = "assets/images/ic_travel.png";
+  static const String IC_DAILY_TASK = "assets/images/ic_daily_task.png";
 
 }
 

@@ -22,7 +22,7 @@ dependencies:
   dio:
   another_flushbar:
   custom_syncfusion_flutter_charts:
-
+  flutter_typeahead:
 
 dev_dependencies:
   flutter_test:

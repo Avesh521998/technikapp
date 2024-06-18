@@ -20,6 +20,7 @@ class LocalColors {
   static const TRAVEL_BACKGROUND = Color(0xFFeea8b0);
   static const MATERIAL_BACKGROUND = Color(0xFFe7d3b0);
   static const MISC_BACKGROUND = Color(0xFFafd2ee);
+  static const DAILY_WORK_BACKGROUND = Color(0xFFaff4ee);
 
 
   static const WHITE = Color(0xFFFFFFFF);

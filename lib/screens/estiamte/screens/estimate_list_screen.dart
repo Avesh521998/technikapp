@@ -8,7 +8,7 @@ import 'package:technikapp/common/extensions_manager.dart';
 import 'package:technikapp/common/label_keys.dart';
 import 'package:technikapp/custom/search_text_field_common.dart';
 import 'package:technikapp/custom/text_field_common.dart';
-
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../api/base/api_result.dart';
 import '../../../api/model/request/add_expense_request_entity.dart';
 import '../../../api/model/response/get_estimate_list_response_entity.dart';
@@ -49,12 +49,13 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   TextEditingController projectNameController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
+  FocusNode projectNameFocusNode = FocusNode();
   FocusNode searchFocusNode = FocusNode();
   FocusNode nameFocusNode = FocusNode();
   FocusNode dateFocusNode = FocusNode();
   FocusNode amountFocusNode = FocusNode();
   FocusNode remarkFocusNode = FocusNode();
-  String selectedVendor = "Select Project";
+  String? selectedVendor;
   String selectedProjectId = "";
   LoginResponseEntity? loginResponse;
   bool isAscending = true;
@@ -62,12 +63,15 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
   void sortItems(bool isAscending) {
     setState(() {
       if (isAscending) {
-        getProjectList.sort((a, b) => a.projectName!.compareTo(b.projectName ?? ""));
+        getProjectList
+            .sort((a, b) => a.projectName!.compareTo(b.projectName ?? ""));
       } else {
-        getProjectList.sort((a, b) => b.projectName!.compareTo(a.projectName ?? ""));
+        getProjectList
+            .sort((a, b) => b.projectName!.compareTo(a.projectName ?? ""));
       }
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -76,7 +80,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
 
   void addButtonList() async {
     loginResponse = await getUserPreferenceData();
-    getEstimateListCubit.getEstimateList(loginResponse?.name??"");
+    getEstimateListCubit.getEstimateList(loginResponse?.name ?? "");
     getProjectListCubit.getProjectList();
     nameController.text = loginResponse?.name ?? "";
     btnList.clear();
@@ -85,6 +89,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
     btnList.add(SelectedTypes(text: Labels.MATERIAL, isSelected: false));
     btnList.add(SelectedTypes(text: Labels.FOOD, isSelected: false));
     btnList.add(SelectedTypes(text: Labels.MISC, isSelected: false));
+    btnList.add(SelectedTypes(text: Labels.DAILY_WORK, isSelected: false));
     setState(() {});
   }
 
@@ -101,8 +106,12 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 65,
-          title: const Text("All Expenses",style: TextStyle(
-              color: LocalColors.PRIMARY_COLOR, fontSize: 24,fontWeight: FontWeight.w600),
+          title: const Text(
+            "All Expenses",
+            style: TextStyle(
+                color: LocalColors.PRIMARY_COLOR,
+                fontSize: 24,
+                fontWeight: FontWeight.w600),
           ),
           actions: [
             InkWell(
@@ -128,7 +137,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
             PopupMenuButton<String>(
               icon: Container(
                 padding: const EdgeInsets.all(2),
-                margin: const EdgeInsets.only(right: 10,left: 5),
+                margin: const EdgeInsets.only(right: 10, left: 5),
                 decoration: const BoxDecoration(
                   color: LocalColors.WHITE,
                   shape: BoxShape.circle,
@@ -148,8 +157,9 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                     sortItems(true);
                   } else if (result == 'Z-A') {
                     sortItems(false);
-                  }else if (result == "All"){
-                    getEstimateListCubit.getEstimateList(loginResponse?.name??"");
+                  } else if (result == "All") {
+                    getEstimateListCubit
+                        .getEstimateList(loginResponse?.name ?? "");
                     getProjectListCubit.getProjectList();
                   }
                 });
@@ -167,7 +177,6 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                   value: 'Z-A',
                   child: Text('Sort Z-A'),
                 ),
-
               ],
             ),
           ],
@@ -175,7 +184,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
         body: RefreshIndicator(
           onRefresh: () async {
             addButtonList();
-            getEstimateListCubit.getEstimateList(loginResponse?.name??"");
+            getEstimateListCubit.getEstimateList(loginResponse?.name ?? "");
             getProjectListCubit.getProjectList();
           },
           child: Column(
@@ -195,12 +204,18 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                   successWidget: (c1, x1) => Container(),
                 ),
               ),
-             Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
-               child: SearchTextFieldWidget(searchController, searchFocusNode,changeListener: (value){
-                  searchEstimateCubit.getSearchEstimateList(loginResponse?.name ?? "", value);
-                },),
-             ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: SearchTextFieldWidget(
+                  searchController,
+                  searchFocusNode,
+                  changeListener: (value) {
+                    searchEstimateCubit.getSearchEstimateList(
+                        loginResponse?.name ?? "", value);
+                  },
+                ),
+              ),
               Expanded(
                 child: APIResourceWidget<GetEstimateListCubit,
                     List<GetEstimateListResponseEntity>>(
@@ -228,7 +243,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                       setState(() {});
                     }
                   },
-                  successWidget: (c1,v1)=>Container(),
+                  successWidget: (c1, v1) => Container(),
                 ),
               ),
             ],
@@ -263,6 +278,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset(
                         model.expenseType?.toLowerCase() ==
@@ -277,7 +293,10 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                                     : model.expenseType?.toLowerCase() ==
                                             Labels.MATERIAL.toLowerCase()
                                         ? ImageAsset.IC_MATERIAL
-                                        : ImageAsset.IC_FUEL,
+                                        : model.expenseType?.toLowerCase() ==
+                                                Labels.DAILY_WORK.toLowerCase()
+                                            ? ImageAsset.IC_DAILY_TASK
+                                            : ImageAsset.IC_FUEL,
                         height: 35,
                         width: 35,
                       ),
@@ -291,71 +310,83 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                             Text(
                               model.expenseType ?? "",
                               style: const TextStyle(
-                                  color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                                  color: LocalColors.PRIMARY_COLOR,
+                                  fontSize: 15),
+                            ),
+                            const SizedBox(
+                              height: 5,
                             ),
                             Text(
                               "Project Name : ${model.projectName ?? ""}",
                               style: const TextStyle(
-                                  color: LocalColors.PRIMARY_COLOR, fontSize: 12),
+                                  color: LocalColors.PRIMARY_COLOR,
+                                  fontSize: 13),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10,),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       Expanded(
                           flex: 0,
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "₹ ${model.value}",
-                                style: const TextStyle(
-                                    color: LocalColors.PRIMARY_COLOR, fontSize: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "₹ ${model.value}",
+                                    style: const TextStyle(
+                                        color: LocalColors.PRIMARY_COLOR,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  InkWell(
+                                      onTap: () {
+                                        showBottomSheet(model: model);
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.all(5),
+                                        padding: const EdgeInsets.all(3),
+                                        decoration: const BoxDecoration(
+                                          color: LocalColors.BUTTON_COLOR,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(Icons.edit,
+                                            size: 15,
+                                            color: LocalColors.ACCENT_COLOR),
+                                      ))
+                                ],
                               ),
-                              InkWell(
-                                  onTap: (){
-                                    showBottomSheet(model: model);
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.all(5),
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: const BoxDecoration(
-                                      color: LocalColors.BUTTON_COLOR,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(Icons.edit, size: 15,color: LocalColors.ACCENT_COLOR),
-                                  ))
-
+                              Text(
+                                formattedDate,
+                                style: const TextStyle(
+                                    color: LocalColors.PRIMARY_COLOR,
+                                    fontSize: 15),
+                              ),
                             ],
-                          ),
-                          Text(
-                            formattedDate,
-                            style: const TextStyle(
-                                color: LocalColors.PRIMARY_COLOR, fontSize: 15),
-                          ),
-                        ],
-                      )),
-
+                          )),
                     ],
                   ),
-                  if(model.isShowRemark ==true)
-                    const SizedBox(height: 10),
-                    if(model.isShowRemark ==true)
+                  if (model.isShowRemark == true) const SizedBox(height: 10),
+                  if (model.isShowRemark == true)
                     Row(
                       children: [
-                        const Text("Remark : ",style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: LocalColors.PRIMARY_COLOR,
-                          fontSize: 14,
-                        )),
+                        const Text("Remark : ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: LocalColors.PRIMARY_COLOR,
+                              fontSize: 14,
+                            )),
                         Expanded(
-                          child: Text("${model.description}",style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: LocalColors.PRIMARY_COLOR,
-                            fontSize: 15,
-                          )),
+                          child: Text("${model.description}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: LocalColors.PRIMARY_COLOR,
+                                fontSize: 15,
+                              )),
                         )
                       ],
                     ),
@@ -392,7 +423,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
       amountController.text = model.value ?? "";
       remarkController.text = model.description ?? "";
       dateController.text = formattedDate;
-    }else{
+    } else {
       projectNameController.clear();
       selectTypeController.clear();
       amountController.clear();
@@ -445,24 +476,22 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    DropdownButtonFormField(
+                    /*DropdownButtonFormField(
                       decoration: InputDecoration(
-                          labelText: "Project Name",
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                           focusedBorder: getTextInputBorders(),
                           border: getTextInputBorders(),
                           disabledBorder: getTextInputBorders(),
                           enabledBorder: getTextInputBorders(),
                           contentPadding: const EdgeInsets.only(
-                              top: 16,
-                              bottom: 16,
-                              left: 16,
-                              right: 16),
+                              top: 16, bottom: 16, left: 16, right: 16),
                           labelStyle: const TextStyle(
-                            fontSize: 16,)),
-
+                            fontSize: 16,
+                          )),
                       isExpanded: true,
-                      hint: Text(selectedVendor,
+                      hint: Text(selectedVendor ?? "Select Project",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontAsset.MEDIUM)),
                       items: getNewProjectList.map((value) {
@@ -477,82 +506,52 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                         projectIdController.text = value?.iD ?? "";
                         newSetState(() {});
                       },
+                    ),*/
+                    TypeAheadField<GetProjectResponseListEntity>(
+                      controller: projectNameController,
+                      focusNode: projectNameFocusNode,
+                      suggestionsCallback: (pattern) async {
+                        ProjectService projectService = ProjectService(getNewProjectList);
+                        return await projectService.find(pattern);
+                      },
+                      hideOnEmpty: true,
+                      emptyBuilder: (context) => const SizedBox(),
+                      builder: (context, controller, focusNode) {
+                        return TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            autofocus: false,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Select Project',
+                            )
+                        );
+                      },
+                      itemBuilder: (context, project) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(project.projectName ?? "",style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: LocalColors.PRIMARY_COLOR,
+                                fontSize: 12,
+                              )),
+                              const Divider()
+                            ],
+                          ),
+                        );
+                      },
+                      onSelected: (GetProjectResponseListEntity suggestion) {
+                        setState(() {
+                          FocusScope.of(context).unfocus();
+                          selectedVendor = suggestion.projectName;
+                          projectNameController.text = suggestion.projectName ?? "";
+                          projectIdController.text = suggestion.iD ?? "";
+                        });
+                      },
                     ),
-                    const SizedBox(height: 10),
-                    Container(
-                        decoration: const BoxDecoration(
-                            border: Border(
-                          bottom: BorderSide(
-                            color: LocalColors.BOTTON_SELECTED,
-                            width: 1.0,
-                          ),
-                        )),
-                        height: 45,
-                        child: Container(
-                          color: LocalColors.BUTTON_COLOR_BG,
-                          child: IgnorePointer(
-                            ignoring: true,
-                            child: TextFieldWidget(
-                              nameController,
-                              Labels.NAME,
-                              nameFocusNode,
-                              outlineInputBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                              textBackGround: LocalColors.TRANSPARENT,
-                            ),
-                          ),
-                        )),
-                    const SizedBox(height: 10),
-                    Container(
-                        decoration: const BoxDecoration(
-                            border: Border(
-                          bottom: BorderSide(
-                            color: LocalColors.BOTTON_SELECTED,
-                            width: 1.0,
-                          ),
-                        )),
-                        height: 45,
-                        child: DateTextFieldWidget(
-                            dateController, Labels.DATE, dateFocusNode,)),
-                    const SizedBox(height: 10),
-                    Container(
-                        decoration: const BoxDecoration(
-                            border: Border(
-                          bottom: BorderSide(
-                            color: LocalColors.BOTTON_SELECTED,
-                          ),
-                        )),
-                        height: 45,
-                        child: TextFieldWidget(
-                          amountController,
-                          Labels.AMOUNT,
-                          amountFocusNode,
-                          textInputType: TextInputType.number,
-                          outlineInputBorder: const OutlineInputBorder(
-                              borderSide: BorderSide.none),
-                          textBackGround: LocalColors.TRANSPARENT,
-                        )),
-                    const SizedBox(height: 10),
-                    Container(
-                        decoration: const BoxDecoration(
-                            border: Border(
-                          bottom: BorderSide(
-                            color: LocalColors.BOTTON_SELECTED,
-                            width: 1.0,
-                          ),
-                        )),
-                        height: 65,
-                        child: TextFieldWidget(
-                          remarkController,
-                          Labels.REMARK,
-                          remarkFocusNode,
-                          maxLine: 4,
-                          minLine: 3,
-                          maxLength: 40,
-                          outlineInputBorder: const OutlineInputBorder(
-                              borderSide: BorderSide.none),
-                          textBackGround: LocalColors.TRANSPARENT,
-                        )),
                     const SizedBox(height: 10),
                     const Text(Labels.SELECT_TYPE,
                         style: TextStyle(
@@ -603,15 +602,95 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
                         );
                       },
                     ),
+                    const SizedBox(height: 10),
+                    Container(
+                        decoration: const BoxDecoration(
+                            border: Border(
+                          bottom: BorderSide(
+                            color: LocalColors.BOTTON_SELECTED,
+                            width: 1.0,
+                          ),
+                        )),
+                        height: 45,
+                        child: Container(
+                          color: LocalColors.BUTTON_COLOR_BG,
+                          child: IgnorePointer(
+                            ignoring: true,
+                            child: TextFieldWidget(
+                              nameController,
+                              Labels.NAME,
+                              nameFocusNode,
+                              outlineInputBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              textBackGround: LocalColors.TRANSPARENT,
+                            ),
+                          ),
+                        )),
+                    const SizedBox(height: 10),
+                    Container(
+                        decoration: const BoxDecoration(
+                            border: Border(
+                          bottom: BorderSide(
+                            color: LocalColors.BOTTON_SELECTED,
+                            width: 1.0,
+                          ),
+                        )),
+                        height: 45,
+                        child: DateTextFieldWidget(
+                          dateController,
+                          Labels.DATE,
+                          dateFocusNode,
+                        )),
+                    const SizedBox(height: 10),
+                    Container(
+                        decoration: const BoxDecoration(
+                            border: Border(
+                          bottom: BorderSide(
+                            color: LocalColors.BOTTON_SELECTED,
+                          ),
+                        )),
+                        height: 45,
+                        child: TextFieldWidget(
+                          amountController,
+                          Labels.AMOUNT,
+                          amountFocusNode,
+                          textInputType: TextInputType.number,
+                          outlineInputBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
+                          textBackGround: LocalColors.TRANSPARENT,
+                        )),
+                    const SizedBox(height: 10),
+                    Container(
+                        decoration: const BoxDecoration(
+                            border: Border(
+                          bottom: BorderSide(
+                            color: LocalColors.BOTTON_SELECTED,
+                            width: 1.0,
+                          ),
+                        )),
+                        height: 65,
+                        child: TextFieldWidget(
+                          remarkController,
+                          Labels.REMARK,
+                          remarkFocusNode,
+                          maxLine: 4,
+                          minLine: 3,
+                          maxLength: 40,
+                          outlineInputBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
+                          textBackGround: LocalColors.TRANSPARENT,
+                        )),
                     const SizedBox(height: 15),
                     if (model != null)
                       BlocConsumerButtonWithProgress<EditEstimateCubit,
                               AddEstimateResponseEntity>(Labels.SAVE,
-                          _editEstimateClick, _goToDashBoardScreenScreen,needToShowDefaultSuccessSnackBar: false),
+                          _editEstimateClick, _goToDashBoardScreenScreen,
+                          needToShowDefaultSuccessSnackBar: false),
                     if (model == null)
                       BlocConsumerButtonWithProgress<AddEstimateCubit,
                               AddEstimateResponseEntity>(Labels.ADD_EXPENCE,
-                          _addEstimateClick, _goToDashBoardScreenScreen,needToShowDefaultSuccessSnackBar: false),
+                          _addEstimateClick, _goToDashBoardScreenScreen,
+                          needToShowDefaultSuccessSnackBar: false),
                   ],
                 ),
               ),
@@ -674,7 +753,7 @@ class _EstimateListingScreenState extends State<EstimateListingScreen> {
     selectedVendor = "";
     selectedVendor = "Select Project";
     addButtonList();
-    getEstimateListCubit.getEstimateList(loginResponse?.name??"");
+    getEstimateListCubit.getEstimateList(loginResponse?.name ?? "");
   }
 
   bool _isDataValid() {
@@ -764,4 +843,22 @@ class SelectedTypes {
     required this.text,
     required this.isSelected,
   });
+}
+
+class ProjectService {
+  final List<GetProjectResponseListEntity> selectedList;
+
+  ProjectService(this.selectedList);
+
+  Future<List<GetProjectResponseListEntity>> find(String search) async {
+    // Implement your search logic here
+    // This is just a mockup of the search
+    await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay
+
+    // Return filtered list based on the search term
+    return selectedList
+        .where((project) =>
+        (project.projectName ?? "").toLowerCase().contains(search.toLowerCase()))
+        .toList();
+  }
 }

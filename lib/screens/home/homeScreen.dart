@@ -36,6 +36,7 @@ class HomeState extends State<HomeScreen> {
   String travelData = "";
   String materialData = "";
   String miscData = "";
+  String dailyWork = "";
 
   @override
   void initState() {
@@ -102,6 +103,9 @@ class HomeState extends State<HomeScreen> {
                       miscData =
                           getProjectExpenseEntity.totalValueByCategory?.mISC ??
                               "";
+                      dailyWork =
+                          getProjectExpenseEntity.totalValueByCategory?.mISC ??
+                              "";
 
                       if (foodData.isNotEmpty) {
                         listData.add(ChartData('Food', double.parse(foodData),
@@ -110,6 +114,10 @@ class HomeState extends State<HomeScreen> {
                       if (fuelData.isNotEmpty) {
                         listData.add(ChartData('Fuel', double.parse(fuelData),
                             LocalColors.FUEL_BACKGROUND));
+                      }
+                      if (dailyWork.isNotEmpty) {
+                        listData.add(ChartData('Daily Work', double.parse(dailyWork),
+                            LocalColors.DAILY_WORK_BACKGROUND));
                       }
                       if (materialData.isNotEmpty) {
                         listData.add(ChartData(
@@ -120,6 +128,10 @@ class HomeState extends State<HomeScreen> {
                       if (miscData.isNotEmpty) {
                         listData.add(ChartData('Misc', double.parse(miscData),
                             LocalColors.MISC_BACKGROUND));
+                      }
+                      if (dailyWork.isNotEmpty) {
+                        listData.add(ChartData('Daily Work', double.parse(dailyWork),
+                            LocalColors.DAILY_WORK_BACKGROUND));
                       }
                       if (travelData.isNotEmpty) {
                         listData.add(ChartData(
